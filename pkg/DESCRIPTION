@@ -1,0 +1,12 @@
+Package: recombination-analyser
+Version: 1.0-0
+Date: 2013/12/31
+Title: hivclust
+Author: {Oliver Ratmann}
+Maintainer: Oliver Ratmann <oliver.ratmann@imperial.ac.uk>
+Depends:
+    R (>= 2.10)
+Description: Tools to identify recombinant sequences among up to 100.000 sequences based on the 3SEQ program. This package implements an interface to high performance computing environments so that a very large number of sequences can be checked for recombinants in parallel. Potential recombinants can be further checked through phylogenetic incongruence plots. For this purpose, an interface to the ExaML program is implemented.
+License: GPL (>=2)
+LazyLoad: yes
+Collate:
