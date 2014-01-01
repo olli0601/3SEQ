@@ -4441,7 +4441,7 @@ hivc.prog.recombination.plot.incongruence<- function()
 	if(is.na(id))
 	{
 		#	read candidate triplets
-		argv				<<-	hivc.cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+		argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 		argv				<<- unlist(strsplit(argv,' '))
 		df.recomb			<- hivc.prog.recombination.process.3SEQ.output()
 		setnames(df.recomb, "dummy", "triplet.id")
@@ -4472,7 +4472,7 @@ hivc.prog.recombination.plot.incongruence<- function()
 			tmp				<- unique(subset(df.recombseq, n.triplets>2)[, FASTASampleCode])
 			dummy			<- lapply(tmp, function(x)
 						{
-							argv			<<- hivc.cmd.recombination.plot.incongruence(indir, infile, insignat, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=x,verbose=1)
+							argv			<<- cmd.recombination.plot.incongruence(indir, infile, insignat, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=x,verbose=1)
 							argv			<<- unlist(strsplit(argv,' '))
 							hivc.prog.recombination.plot.incongruence()			
 						})
@@ -4918,7 +4918,7 @@ hivc.prog.recombination.check.candidates<- function()
 		if(!resume || !file.exists(file))
 		{
 			infile.exa	<- paste(infile,"_3seqcheck_id",id,"_rIn",sep='')		
-			cmd			<- hivc.cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1)
+			cmd			<- cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1)
 		}
 		#
 		#	run bootstrap ExaML for region 'out', all boostraps on one processor
@@ -4927,22 +4927,22 @@ hivc.prog.recombination.check.candidates<- function()
 		if(!resume || !file.exists(file))
 		{
 			infile.exa	<- paste(infile,"_3seqcheck_id",id,"_rOut",sep='')		
-			cmd			<- c(cmd, hivc.cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1))
+			cmd			<- c(cmd, cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1))
 		}
 		#
 		if(verbose) cat(paste("\ncreated ExaML bootstrap runs, n=",length(cmd)))
 		if(!is.null(cmd))
 		{
 			cmd			<- paste(cmd,collapse='\n')
-			#cmd		<- paste(cmd,hivc.cmd.recombination.plot.incongruence(indir, infile, gsub('/',':',insignat), triplet.id=id, verbose=1),sep='')				
+			#cmd		<- paste(cmd,cmd.recombination.plot.incongruence(indir, infile, gsub('/',':',insignat), triplet.id=id, verbose=1),sep='')				
 			#cat(cmd)
 			if(verbose) cat(paste("\nqsub ExaML bootstrap runs, hpc.walltime=",hpc.walltime," hpc.mem=",hpc.mem," hpc.nproc=",hpc.nproc," hpc.q=",hpc.q))
-			cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
+			cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
 			signat		<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')
 			outdir		<- paste(DATA,"tmp",sep='/')
 			outfile		<- paste("3sc",signat,sep='.')
 			#cat(cmd)			
-			hivc.cmd.hpccaller(outdir, outfile, cmd)
+			cmd.hpccaller(outdir, outfile, cmd)
 			Sys.sleep(1)
 		}
 	}
@@ -6035,10 +6035,10 @@ print(beast2.spec$bdsky.origin.prior	)
 			{
 				cmd			<- hivc.cmd.beast2.runxml(indir, x, outsignat, hpc.ncpu=hpc.ncpu, prog.beast=prog.beast, prog.opt.Xmx="1200m", hpc.tmpdir.prefix="beast2")
 				#cmd		<- paste(cmd,hivc.cmd.beast.evalrun(outdir, infilexml, outsignat, infilexml.opt, infilexml.template, length(bfile), verbose=1),sep='')				
-				cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q="pqeph", hpc.mem=hpc.mem,  hpc.nproc=hpc.ncpu)					
+				cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q="pqeph", hpc.mem=hpc.mem,  hpc.nproc=hpc.ncpu)					
 				cat(cmd)				
 				outfile		<- paste("b2",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')
-				hivc.cmd.hpccaller(outdir, outfile, cmd)
+				cmd.hpccaller(outdir, outfile, cmd)
 				stop()
 			})	
 }
@@ -6254,11 +6254,11 @@ hivc.prog.BEAST.generate.xml<- function()
 			{
 				cmd			<- hivc.cmd.beast.runxml(outdir, x, outsignat, hpc.tmpdir.prefix="beast", hpc.ncpu=hpc.ncpu)				
 				cmd			<- paste(cmd,hivc.cmd.beast.evalrun(outdir, infilexml, outsignat, infilexml.opt, infilexml.template, length(bfile), verbose=1),sep='')				
-				cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q="pqeph", hpc.mem=hpc.mem,  hpc.nproc=hpc.ncpu)					
+				cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q="pqeph", hpc.mem=hpc.mem,  hpc.nproc=hpc.ncpu)					
 				cat(cmd)
 				stop()
 				outfile		<- paste("bea",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')
-				hivc.cmd.hpccaller(outdir, outfile, cmd)				
+				cmd.hpccaller(outdir, outfile, cmd)				
 			})		
 }
 ######################################################################################
@@ -6392,12 +6392,12 @@ hivc.pipeline.recombination<- function()
 		file			<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".phylip",sep='')
 		lapply(seq_len(ncol(batch.seq)),function(j)
 				{					
-					cmd			<- hivc.cmd.recombination.run.3seq(infile=file, outfile=paste(indir,'/',infile,'_',batch.seq[1,j],'-',batch.seq[2,j],'_',gsub('/',':',insignat),".3seq",sep=''), recomb.3seq.siglevel=0.1, nproc=1, recomb.3seq.testvsall.beginatseq=batch.seq[1,j], recomb.3seq.testvsall.endatseq=batch.seq[2,j], verbose=1)
-					cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.walltime=35, hpc.q="pqeph", hpc.mem="3850mb",  hpc.nproc=1)
+					cmd			<- cmd.recombination.run.3seq(infile=file, outfile=paste(indir,'/',infile,'_',batch.seq[1,j],'-',batch.seq[2,j],'_',gsub('/',':',insignat),".3seq",sep=''), recomb.3seq.siglevel=0.1, nproc=1, recomb.3seq.testvsall.beginatseq=batch.seq[1,j], recomb.3seq.testvsall.endatseq=batch.seq[2,j], verbose=1)
+					cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=35, hpc.q="pqeph", hpc.mem="3850mb",  hpc.nproc=1)
 					cat(cmd)
 					outdir		<- indir
 					outfile		<- paste("r3seq",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')									
-					hivc.cmd.hpccaller(outdir, outfile, cmd)			
+					cmd.hpccaller(outdir, outfile, cmd)			
 				})		
 		stop()
 	}
@@ -6409,7 +6409,7 @@ hivc.pipeline.recombination<- function()
 		resume		<- 0
 		verbose		<- 1
 		
-		argv				<<-	hivc.cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+		argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 		argv				<<- unlist(strsplit(argv,' '))
 		df.recomb			<- hivc.prog.recombination.process.3SEQ.output()	
 		
@@ -6418,7 +6418,7 @@ hivc.pipeline.recombination<- function()
 		dummy	<- lapply(triplets, function(i)
 				{					
 					if(verbose)	cat(paste("\nprocess triplet number",i,"\n"))
-					argv				<<- hivc.cmd.recombination.check.candidates(indir, infile, insignat, i, resume=resume, verbose=1)
+					argv				<<- cmd.recombination.check.candidates(indir, infile, insignat, i, resume=resume, verbose=1)
 					argv				<<- unlist(strsplit(argv,' '))
 					hivc.prog.recombination.check.candidates()		#this starts ExaML for the ith triplet			
 				})
@@ -6432,11 +6432,11 @@ hivc.pipeline.recombination<- function()
 		resume		<- 0
 		verbose		<- 1
 		
-		argv				<<- hivc.cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="ng2", verbose=1)
+		argv				<<- cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="ng2", verbose=1)
 		argv				<<- unlist(strsplit(argv,' '))
 		hivc.prog.recombination.plot.incongruence()		
 		
-		argv				<<- hivc.cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="g2", verbose=1)
+		argv				<<- cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="g2", verbose=1)
 		argv				<<- unlist(strsplit(argv,' '))
 		hivc.prog.recombination.plot.incongruence()
 		
@@ -6445,7 +6445,7 @@ hivc.pipeline.recombination<- function()
 	{
 		verbose				<- 1
 		
-		argv				<<-	hivc.cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+		argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 		argv				<<- unlist(strsplit(argv,' '))
 		df.recomb			<- hivc.prog.recombination.process.3SEQ.output()
 		setnames(df.recomb, "dummy", "triplet.id")
@@ -6498,8 +6498,8 @@ hivc.pipeline.ExaML<- function()
 		indir	<- paste(dir.name,"tmp",sep='/')
 		infile	<- "ATHENA_2013_03_FirstAliSequences_PROTRT"
 		outdir	<- paste(dir.name,"tmp",sep='/')
-		cmd		<- paste(cmd,hivc.cmd.examl(indir,infile,gsub('/',':',signat.out),gsub('/',':',signat.out),outdir=outdir,resume=1,verbose=1),sep='')
-		cmd		<- paste(cmd,hivc.cmd.examl.cleanup(outdir),sep='')
+		cmd		<- paste(cmd,cmd.examl(indir,infile,gsub('/',':',signat.out),gsub('/',':',signat.out),outdir=outdir,resume=1,verbose=1),sep='')
+		cmd		<- paste(cmd,cmd.examl.cleanup(outdir),sep='')
 	}
 	if(0)	#compute ExaML trees with bootstrap values. Bootstrap is over initial starting trees to start ML search.
 	{
@@ -6512,17 +6512,17 @@ hivc.pipeline.ExaML<- function()
 		infile	<- "ATHENA_2013_03_FirstCurSequences_PROTRT"
 		infile	<- "ATHENA_2013_03_FirstCurSequences_PROTRTCD3"
 		outdir	<- paste(dir.name,"tmp",sep='/')
-		cmd		<- hivc.cmd.examl.bsstarttree(indir,infile,gsub('/',':',signat.out),gsub('/',':',signat.out),bs.from=bs.from,bs.to=bs.to,bs.n=bs.n,outdir=outdir, resume=1, verbose=1)
+		cmd		<- cmd.examl.bsstarttree(indir,infile,gsub('/',':',signat.out),gsub('/',':',signat.out),bs.from=bs.from,bs.to=bs.to,bs.n=bs.n,outdir=outdir, resume=1, verbose=1)
 		#check if we have all bs.n files. if yes, combine and cleanup
 		
 		outdir	<- paste(dir.name,"tmp",sep='/')							
 		lapply(cmd, function(x)
 				{				
-					x		<- hivc.cmd.hpcwrapper(x, hpc.walltime=36, hpc.q="pqeph")
+					x		<- cmd.hpcwrapper(x, hpc.walltime=36, hpc.q="pqeph")
 					signat	<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')
 					outfile	<- paste("pipeline",signat,sep='.')
 					cat(x)
-					#hivc.cmd.hpccaller(outdir, outfile, x)
+					#cmd.hpccaller(outdir, outfile, x)
 					#Sys.sleep(1)
 				})
 		stop()
@@ -6547,16 +6547,16 @@ hivc.pipeline.ExaML<- function()
 		#signat.in	<- "Mon_Sep_22_17/23/46_2013"
 		
 		outdir		<- paste(dir.name,"tmp",sep='/')
-		cmd			<- hivc.cmd.examl.bootstrap(indir,infile,gsub('/',':',signat.in),gsub('/',':',signat.in),bs.from=bs.from,bs.to=bs.to,bs.n=bs.n,outdir=outdir, resume=1, verbose=1)				
+		cmd			<- cmd.examl.bootstrap(indir,infile,gsub('/',':',signat.in),gsub('/',':',signat.in),bs.from=bs.from,bs.to=bs.to,bs.n=bs.n,outdir=outdir, resume=1, verbose=1)				
 		outdir		<- paste(dir.name,"tmp",sep='/')							
 		lapply(cmd, function(x)
 				{				
-					x		<- hivc.cmd.hpcwrapper(x, hpc.walltime=24, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=8)
-					#x		<- hivc.cmd.hpcwrapper(x, hpc.walltime=24, hpc.q="pqeph", hpc.mem="3850mb", hpc.nproc=8)
+					x		<- cmd.hpcwrapper(x, hpc.walltime=24, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=8)
+					#x		<- cmd.hpcwrapper(x, hpc.walltime=24, hpc.q="pqeph", hpc.mem="3850mb", hpc.nproc=8)
 					signat	<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')
 					outfile	<- paste("exa",signat,sep='.')
 					#cat(x)
-					hivc.cmd.hpccaller(outdir, outfile, x)
+					cmd.hpccaller(outdir, outfile, x)
 					Sys.sleep(1)
 				})
 		stop()
@@ -6595,13 +6595,13 @@ hivc.pipeline.clustering<- function()
 		cmd			<- paste(cmd, hivc.cmd.clustering.tptn(indir, infile, insignat, indircov, infilecov, opt.brl="dist.brl.max", patient.n=patient.n, resume=resume),sep='')
 		cmd			<- paste(cmd, hivc.cmd.clustering(indir, infile, insignat, opt.brl, thresh.brl, thresh.bs, resume=resume),sep='')		
 		cmd			<- paste(cmd, hivc.cmd.clustering.msm(indir, infile, insignat, indircov, infilecov, opt.brl, thresh.brl, thresh.bs, resume=resume),sep='')			
-		cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.walltime=71, hpc.q="pqeph", hpc.mem="15850mb",  hpc.nproc=1)
+		cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=71, hpc.q="pqeph", hpc.mem="15850mb",  hpc.nproc=1)
 		
 		cat(cmd)
 		#stop()
 		outdir		<- paste(DATA,"tmp",sep='/')
 		outfile		<- paste("clust",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')
-		hivc.cmd.hpccaller(outdir, outfile, cmd)
+		cmd.hpccaller(outdir, outfile, cmd)
 		quit("no")
 	}
 }
@@ -6724,14 +6724,14 @@ hivc.pipeline.BEAST<- function()
 		hpc.ncpu			<- 1
 
 		cmd					<- hivc.cmd.beast2.runxml(indir, infile, insignat, hpc.ncpu=hpc.ncpu, prog.opt.Xmx="1200m")
-		cmd					<- hivc.cmd.hpcwrapper(cmd, hpc.q="pqeph", hpc.nproc=hpc.ncpu, hpc.walltime=72, hpc.mem="1200mb")
+		cmd					<- cmd.hpcwrapper(cmd, hpc.q="pqeph", hpc.nproc=hpc.ncpu, hpc.walltime=72, hpc.mem="1200mb")
 		
 		cat(cmd)
 		stop()
 		signat		<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')
 		outdir		<- paste(DATA,"tmp",sep='/')
 		outfile		<- paste("b2",signat,sep='.')					
-		hivc.cmd.hpccaller(outdir, outfile, cmd)
+		cmd.hpccaller(outdir, outfile, cmd)
 	}
 	
 }
@@ -6751,7 +6751,7 @@ hivc.proj.pipeline<- function()
 		infile	<- "ATHENA_2013_03_FirstAliSequences_HXB2PROTRT_Wed_May__1_17:08:15_2013.fasta"
 		infile	<- "ATHENA_2013_03_All+LANL_Sequences_Sat_Jun_16_17:23:46_2013.fasta"
 		cmd		<- hivc.cmd.clustalo(indir, infile, signat='', outdir=outdir)
-		cmd		<- hivc.cmd.hpcwrapper(cmd, hpc.q="pqeph", hpc.nproc=1)
+		cmd		<- cmd.hpcwrapper(cmd, hpc.q="pqeph", hpc.nproc=1)
 	}	
 	if(0)	#extract first sequences for each patient as available from ATHENA data set
 	{
@@ -6771,9 +6771,9 @@ hivc.proj.pipeline<- function()
 		cmd			<- hivc.cmd.get.geneticdist(indir, infile, insignat, gd.max, outdir=indir)
 		
 		outfile		<- paste("pipeline",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')					
-		cmd			<- hivc.cmd.hpcwrapper(cmd, hpc.nproc= 1, hpc.q="pqeph")
+		cmd			<- cmd.hpcwrapper(cmd, hpc.nproc= 1, hpc.q="pqeph")
 		cat(cmd)
-		hivc.cmd.hpccaller(outdir, outfile, cmd)
+		cmd.hpccaller(outdir, outfile, cmd)
 		quit("no")
 	}	
 	
@@ -6782,9 +6782,9 @@ hivc.proj.pipeline<- function()
 	outfile	<- paste("pipeline",signat,sep='.')					
 	lapply(cmd, function(x)
 			{				
-				#x<- hivc.cmd.hpcwrapper(x, hpc.q="pqeph")
+				#x<- cmd.hpcwrapper(x, hpc.q="pqeph")
 				cat(x)
-				hivc.cmd.hpccaller(outdir, outfile, x)
+				cmd.hpccaller(outdir, outfile, x)
 			})							
 }
 
