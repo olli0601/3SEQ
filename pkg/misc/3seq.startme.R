@@ -42,7 +42,7 @@ LIB.LOC		<<- NULL
 EPS			<<- 1e-12	#Machine precision	
 
 #the default script to be called if -exe is not specified on the command line
-default.fun 	<- "hivc.pipeline.recombination"	
+default.fun 	<- "pipeline.recom"	
 #default.fun	<- "my.make.documentation"
 #default.fun 	<- "hivc.pipeline.ExaML"
 ###############################################################################
@@ -66,10 +66,10 @@ if(length(args))
 		if(length(tmp)>1) stop("hivclu.startme.R: duplicate -exe")
 		else default.fun<- switch(tmp[1],
 					MAKE.DOCUMENTATION		= "my.make.documentation",
-					BOOTSTRAPSEQ			= "hivc.prog.get.bootstrapseq",
-					RECOMB.PROCESS3SEQOUT	= "hivc.prog.recombination.process.3SEQ.output",
-					RECOMB.CHECKCANDIDATES	= "hivc.prog.recombination.check.candidates",
-					RECOMB.PLOTINCONGRUENCE	= "hivc.prog.recombination.plot.incongruence"
+					BOOTSTRAPSEQ			= "prog.examl.getbootstrapseq",
+					RECOMB.PROCESS3SEQOUT	= "prog.recom.process.3SEQ.output",
+					RECOMB.CHECKCANDIDATES	= "prog.recom.get.incongruence",
+					RECOMB.PLOTINCONGRUENCE	= "prog.recom.plot.incongruence"
 					)
 	}
 	tmp<- na.omit(sapply(args,function(arg)

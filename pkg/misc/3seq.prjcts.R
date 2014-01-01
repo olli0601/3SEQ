@@ -24,7 +24,7 @@ project.hivc.clustering<- function(dir.name= DATA)
 	}	
 	if(0)
 	{
-		hivc.prog.recombination.checkcandidates()
+		prog.recom.checkcandidates()
 	}
 	if(1)
 	{
@@ -401,5 +401,54 @@ project.hivc.clustering<- function(dir.name= DATA)
 		cat(paste("save analysis to file",file))
 		save(ans,check,ph,dist.brl,ph.node.bs,ph.unlinked.seroneg,ph.unlinked.dead, file=file)				
 	}
+}
+
+#	collect likely recombinants or those likely confounding the phylogeny		-- 	identified by eye
+project.ATHENA0313.exclude.recombinants<- function()	
+{
+	verbose				<- 1
+	
+	argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+	argv				<<- unlist(strsplit(argv,' '))
+	df.recomb			<- prog.recom.process.3SEQ.output()
+	setnames(df.recomb, "dummy", "triplet.id")
+	setkey(df.recomb, triplet.id)
+	#	collect likely recombinants or those likely confounding the phylogeny
+	recombinants.ng2	<-	c(	subset( df.recomb, triplet.id==60 )[,child],		#likely confounding
+			subset( df.recomb, triplet.id==52 )[,child],		
+			subset( df.recomb, triplet.id==55 )[,parent2],"R09-26706","R11-12152","R12-15108",		#others cluster in addition
+			subset( df.recomb, triplet.id==48 )[,parent2],"2007G319",								#others cluster in addition
+			subset( df.recomb, triplet.id==112 )[,child],
+			subset( df.recomb, triplet.id==129 )[,child],
+			subset( df.recomb, triplet.id==148 )[,child],		#length only 50
+			subset( df.recomb, triplet.id==135 )[,child],
+			subset( df.recomb, triplet.id==102 )[,child],		#likely confounding
+			subset( df.recomb, triplet.id==85 )[,child],
+			subset( df.recomb, triplet.id==81 )[,child],		#likely confounding
+			subset( df.recomb, triplet.id==125 )[,child],		#likely confounding but might be recombinant
+			subset( df.recomb, triplet.id==120 )[,child]	)
+	recombinants.g2		<-	c(	"2006G052", "2007G263", "M3621708072010", "M4048713072011", 
+			"M4203226082011", "R03-14636", "TN_B.HT.2005.05HT_129336.EU439719", "TN_B.HT.2004.04HT_129732.EU439728", "TN_B.PH.2008.08R_01_361.AB587101", "TN_B.ZA.2011.patient_1720_seq_1746.KC423374", "TN_B.ZA.2012.patient_1720_seq_2734.KC423805", "TN_B.DO.2008.HIV_PRRT_PJ01967_48.JN713614",					#these cluster with  M4048713072011									
+			"R11-15440", "R12-00343", "R10-09812",				#these are children of R08-20970
+			"R12-07939" )
+	recombinants		<- c( recombinants.ng2, recombinants.g2 )
+	if(verbose)	cat(paste("\ncollected recombinants or likely confounding sequences, n=",length(recombinants)))
+	#
+	#	save non-recombinant sequence dataset
+	#
+	indir		<- paste(DATA,"tmp",sep='/')		
+	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"	
+	insignat	<- "Thu_Aug_01_17/05/23_2013"
+	outfile		<- "ATHENA_2013_03_NoRCDRAll+LANL_Sequences"	
+	outsignat	<- "Fri_Nov_01_16/07/23_2013"
+	
+	file		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".R",sep='')
+	load(file)
+	tmp			<- setdiff(rownames(seq.PROT.RT), recombinants)
+	seq.PROT.RT	<- seq.PROT.RT[tmp,]
+	if(verbose)	cat(paste("\nnumber of sequences without (likely) recombinants, n=",nrow(seq.PROT.RT)))
+	file		<- paste(indir,'/',outfile,'_',gsub('/',':',outsignat),".R",sep='')
+	if(verbose)	cat(paste("\nsave new file to",file))
+	save(seq.PROT.RT, file=file)
 }
 

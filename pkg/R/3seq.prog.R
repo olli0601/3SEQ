@@ -1,6 +1,6 @@
 ######################################################################################
 #create PROT+RT data set of first sequences from all patients
-hivc.prog.get.bootstrapseq<- function(check.any.bs.identical=0)
+prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 {	
 	library(ape)
 	library(data.table)
@@ -136,7 +136,7 @@ hivc.prog.get.bootstrapseq<- function(check.any.bs.identical=0)
 		cat("\nfound boostrap sequence alignment")
 }
 ######################################################################################
-hivc.prog.recombination.process.3SEQ.output<- function()
+prog.recom.process.3SEQ.output<- function()
 {	
 	verbose		<- 1
 	resume		<- 1
@@ -325,7 +325,7 @@ hivc.prog.recombination.process.3SEQ.output<- function()
 	df.recomb
 }
 ######################################################################################
-hivc.prog.recombination.plot.incongruence<- function()
+prog.recom.plot.incongruence<- function()
 {
 	require(RColorBrewer)
 	require(ape)
@@ -391,7 +391,7 @@ hivc.prog.recombination.plot.incongruence<- function()
 		#	read candidate triplets
 		argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 		argv				<<- unlist(strsplit(argv,' '))
-		df.recomb			<- hivc.prog.recombination.process.3SEQ.output()
+		df.recomb			<- prog.recom.process.3SEQ.output()
 		setnames(df.recomb, "dummy", "triplet.id")
 		setkey(df.recomb, triplet.id)
 		#	get candidate recombinant sequences
@@ -422,7 +422,7 @@ hivc.prog.recombination.plot.incongruence<- function()
 						{
 							argv			<<- cmd.recombination.plot.incongruence(indir, infile, insignat, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=x,verbose=1)
 							argv			<<- unlist(strsplit(argv,' '))
-							hivc.prog.recombination.plot.incongruence()			
+							prog.recom.plot.incongruence()			
 						})
 			stop()
 		}
@@ -593,7 +593,7 @@ hivc.prog.recombination.plot.incongruence<- function()
 	}
 }
 ######################################################################################
-hivc.prog.recombination.check.candidates<- function()
+prog.recom.get.incongruence<- function()
 {	
 	require(ape)
 	verbose		<- 1
@@ -685,7 +685,7 @@ hivc.prog.recombination.check.candidates<- function()
 		if(verbose)	cat(paste("\ntry to load file ",file))
 		readAttempt	<-	try(suppressWarnings(load(file)))
 		options(show.error.messages = TRUE)
-		if(inherits(readAttempt, "try-error"))	stop(paste("\nCannot find 3SEQ file, run hivc.prog.recombination.process.3SEQ.output?, file=",file))			
+		if(inherits(readAttempt, "try-error"))	stop(paste("\nCannot find 3SEQ file, run prog.recom.process.3SEQ.output?, file=",file))			
 		#	loaded df.recomb
 		
 		#

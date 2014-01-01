@@ -83,7 +83,7 @@ cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep
 cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= PR.RECOMB.PROCESS3SEQOUTPUT, resume=1, verbose=1)
 {
 	cmd<- "#######################################################
-# start: run hivc.prog.recombination.process.3SEQ.output
+# start: run prog.recom.process.3SEQ.output
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -92,7 +92,7 @@ cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= 
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: run hivc.prog.recombination.process.3SEQ.output
+# end: run prog.recom.process.3SEQ.output
 #######################################################\n",sep='')
 	cmd	
 }
@@ -102,7 +102,7 @@ cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= 
 cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1)
 {
 	cmd<- "#######################################################
-# start: hivc.prog.recombination.check.candidates
+# start: prog.recom.get.incongruence
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -111,7 +111,7 @@ cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.i
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: hivc.prog.recombination.check.candidates
+# end: prog.recom.get.incongruence
 #######################################################\n",sep='')
 	cmd	
 }
@@ -119,7 +119,7 @@ cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.i
 cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.id=NA, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=NA,verbose=1)
 {
 	cmd<- "#######################################################
-# start: hivc.prog.recombination.plot.incongruence
+# start: prog.recom.plot.incongruence
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -132,7 +132,7 @@ cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: hivc.prog.recombination.plot.incongruence
+# end: prog.recom.plot.incongruence
 #######################################################\n",sep='')
 	cmd	
 }
