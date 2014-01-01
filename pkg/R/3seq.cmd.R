@@ -176,7 +176,7 @@ cmd.examl<- function(indir, infile, signat.in, signat.out, outdir=indir, prog.pa
 	
 	cmd			<- paste(cmd,paste("\necho \'run ",prog.examl,"\'\n",sep=''))
 	#default commands for final tree
-	tmp			<- hivc.get.hpcsys()
+	tmp			<- cmd.hpcsys()
 	if(tmp=="debug")
 		cmd		<- paste(cmd,HPC.MPIRUN[tmp]," -np ",HPC.NPROC[tmp],' ',prog.examl,' ',args.examl,sep='')
 	else if(tmp==HPC.CX1.IMPERIAL)
@@ -225,7 +225,7 @@ cmd.examl.bsalignment<- function(indir, infile, signat.in, signat.out, bs.id, ou
 #' @export
 cmd.examl.bootstrap.on.one.machine<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
 {
-	hpcsys			<- hivc.get.hpcsys()
+	hpcsys			<- cmd.hpcsys()
 	hpcsys			<- "cx1.hpc.ic.ac.uk"
 	#create number of seeds for the number of runs being processed, which could be less than bs.n
 	bs.id			<- seq.int(bs.from,bs.to)
@@ -305,7 +305,7 @@ cmd			<- paste(cmd,"\n#######################################################
 #' @export
 cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
 {
-	hpcsys			<- hivc.get.hpcsys()
+	hpcsys			<- cmd.hpcsys()
 	#hpcsys			<- "cx1.hpc.ic.ac.uk"
 	#create number of seeds for the number of runs being processed, which could be less than bs.n
 	bs.id			<- seq.int(bs.from,bs.to)
@@ -453,10 +453,17 @@ cmd.examl.cleanup<- function(outdir, prog= PR.EXAML.EXAML)
 	cmd
 }
 
+######################################################################################
+cmd.hpcsys<- function()
+{
+	tmp<- system('domainname',intern=T)
+	if(!nchar(tmp))	tmp<- "debug"
+	tmp
+}
 
 #add additional high performance computing information 
 #' @export
-cmd.hpcwrapper<- function(cmd, hpcsys= hivc.get.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=HPC.NPROC[hpcsys], hpc.q=NA)
+cmd.hpcwrapper<- function(cmd, hpcsys= cmd.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=HPC.NPROC[hpcsys], hpc.q=NA)
 {
 	wrap<- "#!/bin/sh"
 	#hpcsys<- HPC.CX1.IMPERIAL
