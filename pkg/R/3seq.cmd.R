@@ -1,86 +1,42 @@
+#' This file contains R functions that provide an interface to HPC scripting, and the 3SEQ and ExaML programs
+#' Shell scripts are generated that can be either run directly, or submitted to an HPC system.
+#' At present, cmd.hpccaller provides an interface to the CX1B high performance system that runs PBS (portable batch system)
+
 if(!exists("HIVC.CODE.HOME"))	
 {	
-	HIVC.CODE.HOME	<- getwd()
-	INST			<- paste(HIVC.CODE.HOME,"inst",sep='/')
+	HIVC.CODE.HOME	<- getwd()	
 }
 
-#' @export
-PR.BLASTMASK	<- "windowmasker"
+#paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeRECOMB.PROCESS3SEQOUT",sep='/')
+PR.PACKAGE			<- "recombination-analyzer"
+PR.STARTME			<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
 
 #' @export
-PR.BLASTMAKEDB	<- "makeblastdb"
-
-#' @export
-PR.BLASTN		<- "blastn"
-
-#' @export
-PR.CLUSTALO		<- "clustalo"
-
-#' @export
-PR.CLUSTALO.HMM	<- paste(INST,"align_HIV-1_pol_DNA.hmm",sep='/')
-
-#' @export
-PR.FIRSTSEQ		<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeFIRSTSEQ",sep='/')
-
-#' @export
-PR.GENDISTMAT	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeGENDISTMAT",sep='/')
-
-#' @export
-PR.PRECLUST		<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exePRECLUST",sep='/')
-
-#' @export
-PR.CLUST		<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeCLUST",sep='/')
-
-#' @export
-PR.CLUSTTPTN	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeCLUSTTPTN",sep='/')
-
-#' @export
-PR.CLUSTMSM		<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeCLUSTMSM",sep='/')
-
-#' @export
-PR.EXAML.BSCREATE	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeBOOTSTRAPSEQ",sep='/')
+PR.EXAML.BSCREATE	<- paste(PR.STARTME,"-exeBOOTSTRAPSEQ",sep=' ')
 
 #' @export
 PR.RECOMB.3SEQ	<- system.file(package="hivclust", "ext", "3seq") 
 
 #' @export
-PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeRECOMB.PROCESS3SEQOUT",sep='/')
+PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exeRECOMB.PROCESS3SEQOUT",sep=' ')
 
 #' @export
-PR.RECOMB.CHECKCANDIDATES	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeRECOMB.CHECKCANDIDATES",sep='/')
+PR.RECOMB.CHECKCANDIDATES	<- paste(PR.STARTME,"-exeRECOMB.CHECKCANDIDATES",sep=' ')
 
 #' @export
-PR.RECOMB.PLOTINCONGRUENCE	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeRECOMB.PLOTINCONGRUENCE",sep='/')
+PR.RECOMB.PLOTINCONGRUENCE	<- paste(PR.STARTME,"-exeRECOMB.PLOTINCONGRUENCE",sep=' ')
 
 #' @export
-PR.EXAML.PARSER	<- system.file(package="hivclust", "ext", "ExaML-parser") 
+PR.EXAML.PARSER	<- system.file(package=PR.PACKAGE, "ext", "ExaML-parser") 
 
 #' @export
-PR.EXAML.STARTTREE	<- system.file(package="hivclust", "ext", "ExaML-parsimonator")
+PR.EXAML.STARTTREE	<- system.file(package=PR.PACKAGE, "ext", "ExaML-parsimonator")
 
 #' @export
-PR.EXAML.EXAML	<- system.file(package="hivclust", "ext", "examl")
+PR.EXAML.EXAML	<- system.file(package=PR.PACKAGE, "ext", "examl")
 
 #' @export
-PR.EXAML.BS		<- system.file(package="hivclust", "ext", "ExaML-raxml")
-
-#' @export
-PR.BEAST		<- {tmp<- c("/Applications/BEAST_1.7.5/bin/beast","beast"); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp } 
-
-#' @export
-PR.BEASTMCC		<- {tmp<- c("/Applications/BEAST_1.7.5/bin/treeannotator","treeannotator"); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp }
-
-#' @export
-PR.BEASTEVALRUN	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeBEASTEVALRUN",sep='/')
-
-#' @export
-PR.BEASTPOOLRUN	<- paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeBEASTPOOLRUN",sep='/')
-
-#' @export
-PR.BEAST2		<- system.file(package="hivclust", "ext", "beast2.jar") 
-
-#' @export
-PR.BEAST2SA		<- system.file(package="hivclust", "ext", "beast2-SA.jar")
+PR.EXAML.BS		<- system.file(package=PR.PACKAGE, "ext", "ExaML-raxml")
 
 #' @export
 HPC.NPROC		<- {tmp<- c(1,4); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
@@ -95,56 +51,12 @@ HPC.CX1.IMPERIAL<- "cx1.hpc.ic.ac.uk"		#this is set to system('domainname',inter
 HPC.MEM			<- "1750mb"
 
 #' @export
-HPC.LOAD		<- "module load intel-suite mpi R/2.15 raxml examl/2013-05-09 beast/1.7.4"
+HPC.LOAD		<- "module load intel-suite mpi R/2.15"
 
-
-#generate clustalo command
-#' @export
-hivc.cmd.blast.makedb<- function(indir, infile, signat=paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''), outdir=indir, with.mask=1, prog.mask= PR.BLASTMASK, prog.makedb=PR.BLASTMAKEDB, nproc=1, verbose=1)
-{
-	if(verbose) cat(paste("\nprocess",infile,"\n"))
-	file	<- paste(indir, infile,sep='/')
-	#verbose stuff
-	cmd<- "#######################################################
-# run blast.makedb
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog.makedb,"\'",sep=''))
-	if(with.mask)
-	{
-		cmd<- paste(cmd,'\n',prog.mask," -in ",paste(indir,'/',infile,'_',signat,".fasta",sep='')," -infmt fasta -mk_counts  -parse_seqids -out ",paste(outdir,'/',infile,'_',signat,".count",sep=''), sep='')
-		cmd<- paste(cmd,'\n',prog.mask,  " -in ",paste(indir,'/',infile,'_',signat,".fasta",sep='')," -infmt fasta -ustat ",paste(outdir,'/',infile,'_',signat,".count",sep='')," -outfmt maskinfo_asn1_bin -parse_seqids -out ",paste(outdir,'/',infile,'_',signat,".asnb",sep=''), sep='')
-		cmd<- paste(cmd,'\n',prog.makedb," -in ",paste(indir,'/',infile,'_',signat,".fasta",sep='')," -input_type fasta -dbtype nucl -parse_seqids -mask_data ",paste(outdir,'/',infile,'_',signat,".asnb",sep='')," -out ",paste(outdir,'/',infile,'_',signat,".blastdb",sep=''),' -title \"',infile,'\"',sep='')
-	}
-	else
-		cmd<- paste(cmd,'\n',prog.makedb," -in ",paste(indir,'/',infile,'_',signat,".fasta",sep='')," -input_type fasta -dbtype nucl -parse_seqids -out ",paste(outdir,'/',infile,'_',signat,".blastdb",sep=''),' -title \"',infile,'\"',sep='')
-	#clean up
-	
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog.makedb,"\'\n\n",sep=''))
-	cmd
-}
-
-#' default values taken from http://indra.mullins.microbiol.washington.edu/viroblast/viroblast.php
-#' @export
-hivc.cmd.blast<- function(indir, infile, insignat, dbdir, dbfile, dbsignat, outdir=indir, outfile=infile, outsignat=insignat, prog.blastn= PR.BLASTN, blast.task="blastn", blast.max_target_seqs=10, blast.evalue=10, blast.wordsize=11, blast.gapopen=5, blast.gapextend=2, blast.penalty=-3, blast.reward= 2, blast.dust= "no", nproc=1, verbose=1)
-{
-	if(verbose) cat(paste("\nprocess",infile,"\n"))
-	file	<- paste(indir, infile,sep='/')
-	#verbose stuff
-	cmd<- "#######################################################
-# run blastn
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog.blastn,"\'",sep=''))	
-	cmd<- paste(cmd,'\n',prog.blastn," -query ",paste(indir,'/',infile,'_',insignat,".fasta",sep='')," -db ",paste(dbdir,'/',dbfile,'_',dbsignat,".blastdb",sep='')," -out ",paste(outdir,'/',outfile,'_',outsignat,".blast",sep=''),sep='')
-	cmd<- paste(cmd," -task ",blast.task," -max_target_seqs ",blast.max_target_seqs," -evalue ",blast.evalue," -word_size ",blast.wordsize," -gapopen ",blast.gapopen," -gapextend ",blast.gapextend," -penalty ",blast.penalty," -reward ",blast.reward," -dust ",blast.dust," -outfmt 6",sep='')	
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog.blastn,"\'\n\n",sep=''))
-	cmd
-}
 
 #generate 3seq command
 #' @export
-hivc.cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep=''), recomb.3seq.siglevel=0.1, recomb.3seq.testvsall.beginatseq=NA, recomb.3seq.testvsall.endatseq=NA, prog= PR.RECOMB.3SEQ, nproc=1, verbose=1)
+cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep=''), recomb.3seq.siglevel=0.1, recomb.3seq.testvsall.beginatseq=NA, recomb.3seq.testvsall.endatseq=NA, prog= PR.RECOMB.3SEQ, nproc=1, verbose=1)
 {
 	cmd<- "#######################################################
 # start: run 3Seq
@@ -168,7 +80,7 @@ hivc.cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec
 
 #process 3seq output
 #' @export
-hivc.cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= PR.RECOMB.PROCESS3SEQOUTPUT, resume=1, verbose=1)
+cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= PR.RECOMB.PROCESS3SEQOUTPUT, resume=1, verbose=1)
 {
 	cmd<- "#######################################################
 # start: run hivc.prog.recombination.process.3SEQ.output
@@ -187,7 +99,7 @@ hivc.cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, p
 
 #check 3seq candidate recombinants
 #' @export
-hivc.cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1)
+cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1)
 {
 	cmd<- "#######################################################
 # start: hivc.prog.recombination.check.candidates
@@ -204,7 +116,7 @@ hivc.cmd.recombination.check.candidates<- function(indir, infile, insignat, trip
 	cmd	
 }
 
-hivc.cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.id=NA, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=NA,verbose=1)
+cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.id=NA, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=NA,verbose=1)
 {
 	cmd<- "#######################################################
 # start: hivc.prog.recombination.plot.incongruence
@@ -225,165 +137,8 @@ hivc.cmd.recombination.plot.incongruence<- function(indir, infile, insignat, tri
 	cmd	
 }
 
-#generate clustalo command
 #' @export
-hivc.cmd.clustalo<- function(indir, infiles, signat=paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''), outdir=indir, prog= PR.CLUSTALO, hmm=PR.CLUSTALO.HMM, nproc=1, verbose=1)
-{
-	ans<- lapply(infiles,function(x)
-			{
-				if(verbose) cat(paste("\nprocess",x,"\n"))				
-				#verbose stuff
-				cmd<- "#######################################################
-# run clustalo
-#######################################################"
-				cmd<- paste(cmd,paste("\necho \'run ",PR.CLUSTALO,"\'\n",sep=''))
-				
-				#default commands
-				cmd<- paste(cmd,PR.CLUSTALO,sep=" ")								
-				cmd<- paste(cmd, " --infmt=fa --outfmt=fa --force", sep='')
-				cmd<- paste(cmd, " --threads=",nproc," ", sep='' )
-				#cmd<- paste(cmd, " --hmm-in=",hmm," ", sep='' )		not supported in clustalo v1.1.0
-				
-				#file in/out
-				tmp<- paste(indir,x,sep='/')
-				cmd<- paste(cmd, paste("--in",tmp,sep=' ') )				
-				tmp<- paste(outdir,paste(x,ifelse(nchar(signat),'.',''),signat,".clustalo",sep=''),sep='/')
-				cmd<- paste(cmd, paste("--out",tmp,sep=' ') )
-				
-				#verbose stuff
-				cmd<- paste(cmd,paste("\necho \'end ",PR.CLUSTALO,"\'\n\n",sep=''))
-				cmd
-			})
-	if(length(ans)==1)
-		ans<- unlist(ans)
-	ans
-}
-
-hivc.cmd.beast.poolrunxml<- function(indir, infile, insignat, indircov, infilecov, infiletree, infilexml, outsignat, pool.ntip, infilexml.opt="txs4clu", infilexml.template="standard", opt.brl="dist.brl.casc", thresh.brl=0.096, thresh.bs=0.8, prog= PR.BEASTPOOLRUN, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# start: run BEAST for pooled clusters capturing MSM transmission
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -indircov=",indircov," -infilecov=",infilecov,sep='')
-	cmd<- paste(cmd," -infilexml=",infilexml," -infilexml.opt=",infilexml.opt," -infilexml.template=",infilexml.template," -infiletree=",infiletree," -outdir=",indir," -outsignat=",outsignat,sep='')
-	cmd<- paste(cmd," -pool.ntip=",pool.ntip," -thresh.brl=",thresh.brl," -thresh.bs=",thresh.bs," -opt.brl=",opt.brl,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd	
-}
-
-hivc.cmd.beast.evalrun<- function(indir, infile, insignat, infilexml.opt, infilexml.template, pool.n, prog= PR.BEASTEVALRUN, verbose=1)
-{
-	cmd<- "#######################################################
-# start: evaluate BEAST MCC trees
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -indir=",indir," -infile=",infile," -insignat=",insignat,sep='')
-	cmd<- paste(cmd," -infilexml.opt=",infilexml.opt," -infilexml.template=",infilexml.template," -pool.n=",pool.n,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
-	cmd<- paste(cmd,"#######################################################
-# end: evaluate BEAST MCC trees
-#######################################################\n",sep='')
-	cmd	
-}
-
-hivc.cmd.clustering.msm<- function(indir, infile, insignat, indircov, infilecov, opt.brl, thresh.brl, thresh.bs, prog= PR.CLUSTMSM, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# extract clusters capturing MSM transmission
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -indircov=",indircov," -infilecov=",infilecov," -thresh.brl=",thresh.brl," -thresh.bs=",thresh.bs," -opt.brl=",opt.brl,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd
-}
-
-hivc.cmd.clustering.tptn<- function(indir, infile, insignat, indircov, infilecov, opt.brl="dist.brl.casc", patient.n=15700, prog= PR.CLUSTTPTN, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# compute clustering true pos and true neg statistics
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -indircov=",indircov," -infilecov=",infilecov," -patient.n=",patient.n," -opt.brl=",opt.brl,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd
-}
-
-hivc.cmd.clustering<- function(indir, infile, insignat, opt.brl, thresh.brl, thresh.bs, prog= PR.CLUST, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# compute clustering 
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -thresh.brl=",thresh.brl," -thresh.bs=",thresh.bs," -opt.brl=",opt.brl,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd
-}
-
-#' @export
-hivc.cmd.preclustering<- function(indir, infile, insignat, indircov, infilecov, prog= PR.PRECLUST, resume=0, verbose=1)
-{
-	cmd<- "#######################################################
-# precompute clustering helper objects that are memory intensive
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -indircov=",indircov," -infilecov=",infilecov,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd
-}
-
-#' @export
-hivc.cmd.get.geneticdist<- function(indir, infile, signat, gd.max, outdir=indir, prog= PR.GENDISTMAT, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# start: compute genetic distance matrix of sequence alignment
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -outdir=",outdir," -signat=",signat," -maxgd=",gd.max,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
-	cmd<- paste(cmd,"#######################################################
-# end: compute genetic distance matrix of sequence alignment
-#######################################################\n",sep='')
-	cmd
-}
-
-#' @export
-hivc.cmd.get.firstseq<- function(indir, infile, signat.in, signat.out, outdir=indir, prog= PR.FIRSTSEQ, resume=1, verbose=1)
-{
-	cmd<- "#######################################################
-# extract firstseq
-#######################################################"
-	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
-	#default commands
-	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -outdir=",outdir," -insignat=",signat.in," -outsignat=",signat.out,sep='')
-	#verbose stuff
-	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n\n",sep=''))
-	cmd
-}
-
-#' @export
-hivc.cmd.examl<- function(indir, infile, signat.in, signat.out, outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, args.starttree.seed=12345, args.starttree.bsid= NA, prog.examl= PR.EXAML.EXAML, args.examl="-m GAMMA -D", resume=1, verbose=1)
+cmd.examl<- function(indir, infile, signat.in, signat.out, outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, args.starttree.seed=12345, args.starttree.bsid= NA, prog.examl= PR.EXAML.EXAML, args.examl="-m GAMMA -D", resume=1, verbose=1)
 {
 	if(is.na(args.starttree.bsid))
 		args.starttree.bsid	<- "000"
@@ -453,7 +208,7 @@ hivc.cmd.examl<- function(indir, infile, signat.in, signat.out, outdir=indir, pr
 
 #' @export
 #' 	creates a shell command to create a new bootstrap alignment over codon positions of an input alignment 
-hivc.cmd.examl.bsalignment<- function(indir, infile, signat.in, signat.out, bs.id, outdir=indir, prog.bscreate= PR.EXAML.BSCREATE, opt.bootstrap.by="codon",resume=0, verbose=1)
+cmd.examl.bsalignment<- function(indir, infile, signat.in, signat.out, bs.id, outdir=indir, prog.bscreate= PR.EXAML.BSCREATE, opt.bootstrap.by="codon",resume=0, verbose=1)
 {
 	cmd			<- paste("#######################################################
 # start: create and check bootstrap alignment
@@ -468,7 +223,7 @@ hivc.cmd.examl.bsalignment<- function(indir, infile, signat.in, signat.out, bs.i
 }
 
 #' @export
-hivc.cmd.examl.bootstrap.on.one.machine<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
+cmd.examl.bootstrap.on.one.machine<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
 {
 	hpcsys			<- hivc.get.hpcsys()
 	hpcsys			<- "cx1.hpc.ic.ac.uk"
@@ -481,8 +236,8 @@ hivc.cmd.examl.bootstrap.on.one.machine<- function(indir, infile, signat.in, sig
 				cmd			<- ''
 				if(hpcsys=="debug")						#my MAC - don t use scratch
 				{
-					cmd		<- paste(cmd,hivc.cmd.examl.bsalignment(indir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=indir, verbose=verbose),sep='\n')
-					cmd		<- paste(cmd,hivc.cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl.bsalignment(indir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=indir, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
 				}
 				else if(hpcsys=="cx1.hpc.ic.ac.uk")		#imperial - use scratch directory
 				{										
@@ -494,8 +249,8 @@ hivc.cmd.examl.bootstrap.on.one.machine<- function(indir, infile, signat.in, sig
 						tmp	<- paste(indir,'/',infile,'_',gsub('/',':',signat.in),".R",sep='')
 						cmd	<- paste(cmd,"\ncp ",tmp," ",tmpdir,sep='')
 					}
-					cmd		<- paste(cmd,hivc.cmd.examl.bsalignment(tmpdir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=tmpdir, verbose=verbose),sep='\n')
-					cmd		<- paste(cmd,hivc.cmd.examl(tmpdir, infile, signat.in, signat.out, outdir=tmpdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl.bsalignment(tmpdir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=tmpdir, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl(tmpdir, infile, signat.in, signat.out, outdir=tmpdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
 				}
 				cmd
 			})
@@ -548,7 +303,7 @@ cmd			<- paste(cmd,"\n#######################################################
 }
 
 #' @export
-hivc.cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
+cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0), outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, opt.bootstrap.by="codon", args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, tmpdir.prefix="examl", resume=1, verbose=1)
 {
 	hpcsys			<- hivc.get.hpcsys()
 	#hpcsys			<- "cx1.hpc.ic.ac.uk"
@@ -561,8 +316,8 @@ hivc.cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.fro
 				cmd			<- ''				
 				if(hpcsys=="debug")						#my MAC - don t use scratch
 				{
-					cmd		<- paste(cmd,hivc.cmd.examl.bsalignment(indir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=indir, verbose=verbose),sep='\n')
-					cmd		<- paste(cmd,hivc.cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl.bsalignment(indir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=indir, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
 				}
 				else if(hpcsys=="cx1.hpc.ic.ac.uk")		#imperial - use scratch directory
 				{										
@@ -583,8 +338,8 @@ hivc.cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.fro
 					cmd		<- paste(cmd,"mkdir -p ",tmpdir,'\n',sep='')
 					tmp		<- paste(indir,'/',infile,'_',gsub('/',':',signat.in),".R",sep='')
 					cmd		<- paste(cmd,"cp ",tmp," ",tmpdir,sep='')
-					cmd		<- paste(cmd,hivc.cmd.examl.bsalignment(tmpdir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=tmpdir, verbose=verbose),sep='\n')
-					cmd		<- paste(cmd,hivc.cmd.examl(tmpdir, infile, signat.in, signat.out, outdir=tmpdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl.bsalignment(tmpdir, infile, signat.in, signat.out, bs.id[i], opt.bootstrap.by=opt.bootstrap.by, outdir=tmpdir, verbose=verbose),sep='\n')
+					cmd		<- paste(cmd,cmd.examl(tmpdir, infile, signat.in, signat.out, outdir=tmpdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='\n')
 					cmd		<- paste(cmd,"cp -f ",tmpdir,"/ExaML_result.",infile,'_',gsub('/',':',signat.in),".finaltree.",sprintf("%03d",bs.id[i]),' ', outdir,'\n',sep='')
 					cmd		<- paste(cmd,"cp -f ",tmpdir,"/ExaML_info.",infile,'_',gsub('/',':',signat.in),".finaltree.",sprintf("%03d",bs.id[i]),' ', outdir,'\n',sep='')
 					if(resume)
@@ -631,7 +386,7 @@ hivc.cmd.examl.bootstrap<- function(indir, infile, signat.in, signat.out, bs.fro
 }
 
 #' @export
-hivc.cmd.examl.bsstarttree<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0),outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, resume=1, verbose=1)
+cmd.examl.bsstarttree<- function(indir, infile, signat.in, signat.out, bs.from=0, bs.to=99, bs.n=bs.to-bs.from+ifelse(bs.from==0,1,0),outdir=indir, prog.parser= PR.EXAML.PARSER, prog.starttree= PR.EXAML.STARTTREE, prog.examl=PR.EXAML.EXAML, args.examl="-m GAMMA -D", prog.supportadder=PR.EXAML.BS, resume=1, verbose=1)
 {
 	#create number of seeds for the number of runs being processed, which could be less than bs.n
 	bs.id	<- seq.int(bs.from,bs.to)
@@ -640,7 +395,7 @@ hivc.cmd.examl.bsstarttree<- function(indir, infile, signat.in, signat.out, bs.f
 			{
 				cmd			<- paste("cp ",paste(indir,paste(infile,'_',signat.in,".phylip",sep=''),sep='/'),sep='')
 				cmd			<- paste(cmd,' ',paste(indir,paste(infile,'_',signat.in,".phylip.",sprintf("%03d",bs.id[i]),sep=''),sep='/'),"\n",sep='')
-				cmd			<- paste(cmd, hivc.cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='')
+				cmd			<- paste(cmd, cmd.examl(indir, infile, signat.in, signat.out, outdir=outdir, prog.parser= prog.parser, prog.starttree= prog.starttree, args.starttree.seed=bs.seeds[i], args.starttree.bsid= bs.id[i], prog.examl=prog.examl, args.examl=args.examl, resume=resume, verbose=verbose),sep='')
 				curr.dir	<- getwd()
 				cmd			<- paste(cmd,"#######################################################
 # start: check if all ExaML boostrap trees have been computed and if yes create ExaML bootstrap tree
@@ -682,7 +437,7 @@ hivc.cmd.examl.bsstarttree<- function(indir, infile, signat.in, signat.out, bs.f
 }
 
 #' @export
-hivc.cmd.examl.cleanup<- function(outdir, prog= PR.EXAML.EXAML)
+cmd.examl.cleanup<- function(outdir, prog= PR.EXAML.EXAML)
 {
 	cmd<- "#######################################################
 # clean up after ExaML tree
@@ -698,98 +453,10 @@ hivc.cmd.examl.cleanup<- function(outdir, prog= PR.EXAML.EXAML)
 	cmd
 }
 
-#' @export
-hivc.cmd.beast.runxml<- function(indir, infile, insignat, prog.beast=PR.BEAST, prog.beastmcc=PR.BEASTMCC, beastmcc.burnin=500, beastmcc.heights="median", hpc.tmpdir.prefix="beast", hpc.ncpu=1)
-{
-	cmd		<- "#######################################################
-# start: run BEAST
-#######################################################"	
-	hpcsys	<- hivc.get.hpcsys()
-	#hpcsys<- "cx1.hpc.ic.ac.uk"
-	cmd		<- paste(cmd,paste("\necho \'run ",prog.beast[hpcsys],"\'\n",sep=''))
-	if(hpcsys=="debug")						#my MAC - don t use scratch
-	{		
-		tmp		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,prog.beast[hpcsys]," -strict -overwrite -working ",tmp,'\n',sep='')
-	}
-	else if(hpcsys=="cx1.hpc.ic.ac.uk")		#imperial - use scratch directory
-	{
-		cmd		<- paste(cmd,"CWD=$(pwd)\n",sep='')
-		cmd		<- paste(cmd,"echo $CWD\n",sep='')		
-		tmpdir	<- paste("$CWD/",hpc.tmpdir.prefix,'_',format(Sys.time(),"%y-%m-%d-%H-%M-%S"),sep='')
-		cmd		<- paste(cmd,"mkdir -p ",tmpdir,'\n',sep='')
-		tmp		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,"cp ",tmp," ",tmpdir,'\n',sep='')
-		tmp		<- paste(tmpdir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,prog.beast[hpcsys]," -strict -working -threads ",hpc.ncpu," ",tmp,'\n',sep='')	
-		cmd		<- paste(cmd,"cp -f ",tmpdir,"/* ", indir,'\n',sep='')		
-	}
-	cmd		<- paste(cmd,"echo \'end ",prog.beast[hpcsys],"\'\n",sep='')
-	cmd		<- paste(cmd,"#######################################################
-# end: run BEAST
-#######################################################\n",sep='')
-	cmd<- paste(cmd,"#######################################################
-# start: run TREEANNOTATOR
-#######################################################\n",sep='')
-	cmd		<- paste(cmd,"echo \'run ",prog.beastmcc[hpcsys],"\'\n",sep='')
-	if(hpcsys=="debug")						#my MAC - don t use scratch
-	{	
-		tmp		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".timetrees",sep='')
-		cmd		<- paste(cmd,prog.beastmcc[hpcsys]," -burnin ",beastmcc.burnin," -heights ",beastmcc.heights," ",tmp,sep='')
-		tmp		<- paste(indir,'/',infile,"_mcc_",gsub('/',':',insignat),".nex",sep='')
-		cmd		<- paste(cmd," ",tmp,"\n",sep='')
-	}
-	else if(hpcsys=="cx1.hpc.ic.ac.uk")		#imperial - use scratch directory
-	{
-		tmp		<- paste(tmpdir,'/',infile,'_',gsub('/',':',insignat),".timetrees",sep='')
-		cmd		<- paste(cmd,prog.beastmcc[hpcsys]," -burnin ",beastmcc.burnin," -heights ",beastmcc.heights," ",tmp,sep='')
-		tmp		<- paste(tmpdir,'/',infile,"_mcc_",gsub('/',':',insignat),".nex",sep='')
-		cmd		<- paste(cmd," ",tmp,"\n",sep='')
-		cmd		<- paste(cmd,"cp -f ",tmp," ", indir,'\n',sep='')
-	}
-	cmd		<- paste(cmd,"echo \'end ",prog.beastmcc[hpcsys],"\'\n",sep='')
-	cmd<- paste(cmd,"#######################################################
-# end: run TREEANNOTATOR
-#######################################################\n",sep='')		
-	cmd
-}
-
-#' @export
-hivc.cmd.beast2.runxml<- function(indir, infile, insignat, prog.beast=PR.BEAST2, prog.opt.Xms="64m", prog.opt.Xmx="400m", hpc.tmpdir.prefix="beast2", hpc.ncpu=1)
-{
-	cmd		<- "#######################################################
-# start: run BEAST2
-#######################################################"	
-	hpcsys	<- hivc.get.hpcsys()
-	#hpcsys<- "cx1.hpc.ic.ac.uk"
-	cmd		<- paste(cmd,paste("\necho \'run ",prog.beast,"\'\n",sep=''))
-	if(hpcsys=="debug")						#my MAC - don t use scratch
-	{		
-		tmp		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,"java -Xms",prog.opt.Xms," -Xmx",prog.opt.Xmx," -jar ",prog.beast," -overwrite -working -threads ",hpc.ncpu," ",tmp,'\n',sep='')
-	}
-	else if(hpcsys=="cx1.hpc.ic.ac.uk")		#imperial - use scratch directory
-	{
-		cmd		<- paste(cmd,"CWD=$(pwd)\n",sep='')
-		cmd		<- paste(cmd,"echo $CWD\n",sep='')		
-		tmpdir	<- paste("$CWD/",hpc.tmpdir.prefix,'_',format(Sys.time(),"%y-%m-%d-%H-%M-%S"),sep='')
-		cmd		<- paste(cmd,"mkdir -p ",tmpdir,'\n',sep='')
-		tmp		<- paste(indir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,"cp ",tmp," ",tmpdir,'\n',sep='')
-		tmp		<- paste(tmpdir,'/',infile,'_',gsub('/',':',insignat),".xml",sep='')
-		cmd		<- paste(cmd,"java -Xms",prog.opt.Xms," -Xmx",prog.opt.Xmx," -jar ",prog.beast," -working -threads ",hpc.ncpu," ",tmp,'\n',sep='')	
-		cmd		<- paste(cmd,"cp -f ",tmpdir,"/* ", indir,'\n',sep='')		
-	}
-	cmd		<- paste(cmd,"echo \'end ",prog.beast,"\'\n",sep='')
-	cmd		<- paste(cmd,"#######################################################
-# end: run BEAST2
-#######################################################\n",sep='')
-	cmd
-}
 
 #add additional high performance computing information 
 #' @export
-hivc.cmd.hpcwrapper<- function(cmd, hpcsys= hivc.get.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=HPC.NPROC[hpcsys], hpc.q=NA)
+cmd.hpcwrapper<- function(cmd, hpcsys= hivc.get.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=HPC.NPROC[hpcsys], hpc.q=NA)
 {
 	wrap<- "#!/bin/sh"
 	#hpcsys<- HPC.CX1.IMPERIAL
@@ -817,7 +484,7 @@ hivc.cmd.hpcwrapper<- function(cmd, hpcsys= hivc.get.hpcsys(), hpc.walltime=24, 
 
 #create high performance computing qsub file and submit
 #' @export
-hivc.cmd.hpccaller<- function(outdir, outfile, cmd)
+cmd.hpccaller<- function(outdir, outfile, cmd)
 {
 	if( nchar( Sys.which("qsub") ) )
 	{
