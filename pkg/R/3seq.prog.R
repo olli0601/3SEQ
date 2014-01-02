@@ -1,5 +1,6 @@
 ######################################################################################
 #create PROT+RT data set of first sequences from all patients
+#' @export
 prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 {	
 	library(ape)
@@ -136,6 +137,7 @@ prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 		cat("\nfound boostrap sequence alignment")
 }
 ######################################################################################
+#' @export
 prog.recom.process.3SEQ.output<- function()
 {	
 	verbose		<- 1
@@ -325,6 +327,7 @@ prog.recom.process.3SEQ.output<- function()
 	df.recomb
 }
 ######################################################################################
+#' @export
 prog.recom.plot.incongruence<- function()
 {
 	require(RColorBrewer)
@@ -593,25 +596,26 @@ prog.recom.plot.incongruence<- function()
 	}
 }
 ######################################################################################
+#' @export
 prog.recom.get.incongruence<- function()
 {	
 	require(ape)
+	#default arguments
 	verbose		<- 1
 	resume		<- 0
-	indir		<- paste(DATA,"tmp",sep='/')		
-	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"			
-	insignat	<- "Thu_Aug_01_17/05/23_2013"
-	
-	id			<- 51
 	seq.select.n<- 10
 	bs.from		<- 0
 	bs.to		<- 499
-	bs.n		<- 500
-	
+	bs.n		<- 500	
 	hpc.walltime<- 36
 	hpc.mem		<- "600mb"
 	hpc.nproc	<- 1		
 	hpc.q		<- "pqeph"
+	#default job
+	indir		<- paste(DATA,"tmp",sep='/')		
+	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"			
+	insignat	<- "Thu_Aug_01_17/05/23_2013"	
+	id			<- 51	
 	
 	if(exists("argv"))
 	{
@@ -641,6 +645,23 @@ prog.recom.get.incongruence<- function()
 						{	switch(substr(arg,2,10),
 									tripletid= return(as.numeric(substr(arg,12,nchar(arg)))),NA)	}))
 		if(length(tmp)>0) id<- tmp[1]
+		#
+		tmp<- na.omit(sapply(argv,function(arg)
+						{	switch(substr(arg,2,13),
+									hpc.walltime= return(substr(arg,15,nchar(arg))),NA)	}))
+		if(length(tmp)>0) hpc.walltime<- tmp[1]
+		tmp<- na.omit(sapply(argv,function(arg)
+						{	switch(substr(arg,2,8),
+									hpc.mem= return(substr(arg,10,nchar(arg))),NA)	}))
+		if(length(tmp)>0) hpc.mem<- tmp[1]
+		tmp<- na.omit(sapply(argv,function(arg)
+						{	switch(substr(arg,2,6),
+									hpc.q= return(substr(arg,8,nchar(arg))),NA)	}))
+		if(length(tmp)>0) hpc.q<- tmp[1]
+		tmp<- na.omit(sapply(argv,function(arg)
+						{	switch(substr(arg,2,10),
+									hpc.nproc= return(as.numeric(substr(arg,12,nchar(arg)))),NA)	}))
+		if(length(tmp)>0) hpc.nproc<- tmp[1]
 	}	
 	if(verbose)
 	{
@@ -653,7 +674,11 @@ prog.recom.get.incongruence<- function()
 		print(seq.select.n)
 		print(bs.from)
 		print(bs.to)
-		print(bs.n)		
+		print(bs.n)
+		print(hpc.walltime)
+		print(hpc.mem)
+		print(hpc.nproc)		
+		print(hpc.q)
 	}
 	if(resume)
 	{

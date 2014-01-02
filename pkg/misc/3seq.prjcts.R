@@ -403,6 +403,18 @@ project.hivc.clustering<- function(dir.name= DATA)
 	}
 }
 
+project.ATHENA0313.process.recombinants<- function()
+{
+	indir		<- paste(DATA,"tmp",sep='/')		
+	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"
+	#infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences100"
+	insignat	<- "Thu_Aug_01_17/05/23_2013"
+	
+	pipeline.recom.run.3seq(indir, infile, insignat, batch.n=100, hpc.walltime=35, hpc.q='pqeph', hpc.mem="3850mb", hpc.nproc=1)
+	pipeline.recom.get.phyloincongruence.for.candidates(indir, infile, insignat, resume=0, verbose=1, hpc.walltime=35, hpc.q=NA, hpc.mem="600mb", hpc.nproc=1)	
+	pipeline.recom.plot.phyloincongruence.for.candidates(indir, infile, insignat, resume=0, verbose=1)		
+}
+
 #	collect likely recombinants or those likely confounding the phylogeny		-- 	identified by eye
 project.ATHENA0313.exclude.recombinants<- function()	
 {

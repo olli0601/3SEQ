@@ -1,4 +1,4 @@
-DEST= $(R_LIBS_USER)/recombination-analyzer
+DEST= $(R_LIBS_USER)/recombination.analyzer
 EXTERNAL_CODE= $(DEST)/ext
 CWD= $$(pwd)
 
@@ -22,6 +22,10 @@ all:
 	@echo "********* BUILDING ExaML ********************** "
 	@echo "*********************************************** "	
 	make examl	
+	@echo "*********************************************** "
+	@echo "********* MAKE DOCUMENTATION ****************** "
+	@echo "*********************************************** "	
+	make roxygen
 	
 3seq:
 	echo $(CWD)	
@@ -54,3 +58,6 @@ examl:
 	rm -rf ExaML
 	mv $(EXTERNAL_CODE)/ExaML-examl $(EXTERNAL_CODE)/examl
 	
+make roxygen:
+	echo $(CWD)
+	../misc/3seq.startme.R -exe=ROXYGENIZE

@@ -1,5 +1,6 @@
 #' this file contains all R functions of the R package
 #' @import ape
+#' @import RColorBrewer
 #' @import data.table
 
 

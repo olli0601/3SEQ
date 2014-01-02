@@ -28,7 +28,7 @@ require(data.table)
 require(recombination.analyzer)
 
 #the package directory (local working copy of the code, not the installed package directory within the R directory 
-CODE.HOME	<<- "/Users/Oliver/git/recombination-anaylyzer/pkg"
+CODE.HOME	<<- "/Users/Oliver/git/recombination.analyzer/pkg"
 #CODE.HOME	<<- "/work/or105/libs/hivclust/pkg"
 
 #the home directory of all projects
@@ -58,14 +58,14 @@ if(length(args))
 	tmp<- na.omit(sapply(args,function(arg)
 					{
 						switch(substr(arg,2,4),
-								exe= return(substr(arg,5,nchar(arg))),
+								exe= return(substr(arg,6,nchar(arg))),
 								NA)
 					}))
 	if(length(tmp)!=0)
 	{
 		if(length(tmp)>1) stop("hivclu.startme.R: duplicate -exe")
 		else default.fun<- switch(tmp[1],
-					MAKE.DOCUMENTATION		= "my.make.documentation",
+					ROXYGENIZE				= "my.make.documentation",
 					BOOTSTRAPSEQ			= "prog.examl.getbootstrapseq",
 					RECOMB.PROCESS3SEQOUT	= "prog.recom.process.3SEQ.output",
 					RECOMB.CHECKCANDIDATES	= "prog.recom.get.incongruence",

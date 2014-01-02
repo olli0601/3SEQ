@@ -2,57 +2,22 @@
 #' Shell scripts are generated that can be either run directly, or submitted to an HPC system.
 #' At present, cmd.hpccaller provides an interface to the CX1B high performance system that runs PBS (portable batch system)
 
-if(!exists("HIVC.CODE.HOME"))	
-{	
-	HIVC.CODE.HOME	<- getwd()	
-}
-
-#paste(HIVC.CODE.HOME,"pkg/misc/hivclu.startme.R -exeRECOMB.PROCESS3SEQOUT",sep='/')
-PR.PACKAGE			<- "recombination-analyzer"
-PR.STARTME			<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
-
-#' @export
-PR.EXAML.BSCREATE	<- paste(PR.STARTME,"-exeBOOTSTRAPSEQ",sep=' ')
-
-#' @export
-PR.RECOMB.3SEQ	<- system.file(package="hivclust", "ext", "3seq") 
-
-#' @export
-PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exeRECOMB.PROCESS3SEQOUT",sep=' ')
-
-#' @export
-PR.RECOMB.CHECKCANDIDATES	<- paste(PR.STARTME,"-exeRECOMB.CHECKCANDIDATES",sep=' ')
-
-#' @export
-PR.RECOMB.PLOTINCONGRUENCE	<- paste(PR.STARTME,"-exeRECOMB.PLOTINCONGRUENCE",sep=' ')
-
-#' @export
-PR.EXAML.PARSER	<- system.file(package=PR.PACKAGE, "ext", "ExaML-parser") 
-
-#' @export
-PR.EXAML.STARTTREE	<- system.file(package=PR.PACKAGE, "ext", "ExaML-parsimonator")
-
-#' @export
-PR.EXAML.EXAML	<- system.file(package=PR.PACKAGE, "ext", "examl")
-
-#' @export
-PR.EXAML.BS		<- system.file(package=PR.PACKAGE, "ext", "ExaML-raxml")
-
-#' @export
-HPC.NPROC		<- {tmp<- c(1,4); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
-
-#' @export
-HPC.MPIRUN		<- {tmp<- c("mpirun","mpiexec"); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
-
-#' @export
-HPC.CX1.IMPERIAL<- "cx1.hpc.ic.ac.uk"		#this is set to system('domainname',intern=T) for the hpc cluster of choice
-
-#' @export
-HPC.MEM			<- "1750mb"
-
-#' @export
-HPC.LOAD		<- "module load intel-suite mpi R/2.15"
-
+PR.PACKAGE					<- "recombination.analyzer"
+PR.STARTME					<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
+PR.EXAML.BSCREATE			<- paste(PR.STARTME,"-exeBOOTSTRAPSEQ",sep=' ')
+PR.RECOMB.3SEQ				<- system.file(package="hivclust", "ext", "3seq") 
+PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exe=RECOMB.PROCESS3SEQOUT",sep=' ')
+PR.RECOMB.CHECKCANDIDATES	<- paste(PR.STARTME,"-exe=RECOMB.CHECKCANDIDATES",sep=' ')
+PR.RECOMB.PLOTINCONGRUENCE	<- paste(PR.STARTME,"-exe=RECOMB.PLOTINCONGRUENCE",sep=' ')
+PR.EXAML.PARSER				<- system.file(package=PR.PACKAGE, "ext", "ExaML-parser") 
+PR.EXAML.STARTTREE			<- system.file(package=PR.PACKAGE, "ext", "ExaML-parsimonator")
+PR.EXAML.EXAML				<- system.file(package=PR.PACKAGE, "ext", "examl")
+PR.EXAML.BS					<- system.file(package=PR.PACKAGE, "ext", "ExaML-raxml")
+HPC.NPROC					<- {tmp<- c(1,4); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
+HPC.MPIRUN					<- {tmp<- c("mpirun","mpiexec"); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
+HPC.CX1.IMPERIAL			<- "cx1.hpc.ic.ac.uk"		#this is set to system('domainname',intern=T) for the hpc cluster of choice
+HPC.MEM						<- "1750mb"
+HPC.LOAD					<- "module load intel-suite mpi R/2.15"
 
 #generate 3seq command
 #' @export
@@ -99,7 +64,7 @@ cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= 
 
 #check 3seq candidate recombinants
 #' @export
-cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1)
+cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1,hpc.walltime=NA, hpc.q=NA, hpc.mem=NA, hpc.nproc=NA)
 {
 	cmd<- "#######################################################
 # start: prog.recom.get.incongruence
@@ -107,7 +72,11 @@ cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.i
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
 	cmd<- paste(cmd,prog," -v=",verbose," -resume=",resume,sep='')
-	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -tripletid=",triplet.id,sep='')
+	cmd<- paste(cmd," -indir=",indir," -infile=",infile," -insignat=",insignat," -tripletid=",triplet.id,sep='')	
+	if(!is.na(hpc.walltime))	cmd<- paste(cmd," -hpc.walltime=",hpc.walltime,sep='')
+	if(!is.na(hpc.q))			cmd<- paste(cmd," -hpc.q=",hpc.q,sep='')
+	if(!is.na(hpc.mem))			cmd<- paste(cmd," -hpc.mem=",hpc.mem,sep='') 
+	if(!is.na(hpc.nproc))		cmd<- paste(cmd," -hpc.nproc=",hpc.nproc,sep='')	
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
@@ -206,8 +175,8 @@ cmd.examl<- function(indir, infile, signat.in, signat.out, outdir=indir, prog.pa
 	cmd
 }
 
-#' @export
-#' 	creates a shell command to create a new bootstrap alignment over codon positions of an input alignment 
+# 	creates a shell command to create a new bootstrap alignment over codon positions of an input alignment
+#' @export 
 cmd.examl.bsalignment<- function(indir, infile, signat.in, signat.out, bs.id, outdir=indir, prog.bscreate= PR.EXAML.BSCREATE, opt.bootstrap.by="codon",resume=0, verbose=1)
 {
 	cmd			<- paste("#######################################################
