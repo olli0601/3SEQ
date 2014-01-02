@@ -405,6 +405,10 @@ project.hivc.clustering<- function(dir.name= DATA)
 
 project.ATHENA0313.process.recombinants<- function()
 {
+	#library(ape)
+	#library(data.table)	
+	require(recombination.analyzer)
+	
 	indir		<- paste(DATA,"tmp",sep='/')		
 	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"
 	#infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences100"

@@ -24,9 +24,6 @@ if(!any(args=='--args'))
 if(any(args=='--args'))
 	args<- args[-(1:match("--args", args)) ]
 
-require(data.table)
-require(recombination.analyzer)
-
 #the package directory (local working copy of the code, not the installed package directory within the R directory 
 CODE.HOME	<<- "/Users/Oliver/git/recombination.analyzer/pkg"
 #CODE.HOME	<<- "/work/or105/libs/hivclust/pkg"
@@ -47,8 +44,9 @@ default.fun 	<- "pipeline.recom"
 #default.fun 	<- "hivc.pipeline.ExaML"
 ###############################################################################
 #	re-load all R files
+require(data.table)
 function.list<-c(list.files(path= paste(CODE.HOME,"R",sep='/'), pattern = ".R$", all.files = FALSE,
-		full.names = TRUE, recursive = FALSE),paste(CODE.HOME,"misc","3seq.prjcts.R",sep='/'),paste(CODE.HOME,"misc","bezemer2013a_figs.R",sep='/'),paste(CODE.HOME,"misc","gcproject2013.R",sep='/'))
+		full.names = TRUE, recursive = FALSE),paste(CODE.HOME,"misc","3seq.prjcts.R",sep='/'))
 sapply(function.list,function(x){ source(x,echo=FALSE,print.eval=FALSE, verbose=FALSE) })
 ###############################################################################
 #	select script specified with -exe on the command line. If missing, start default script 'default.fun'.

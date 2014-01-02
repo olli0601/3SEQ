@@ -6,6 +6,7 @@ prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 	library(ape)
 	library(data.table)
 	library(hivclust)
+	require(recombination.analyzer)
 	
 	indir				<- outdir		<- paste(DATA,"tmp",sep='/')
 	infile				<- "ATHENA_2013_03_FirstCurSequences_PROTRT"
@@ -140,6 +141,8 @@ prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 #' @export
 prog.recom.process.3SEQ.output<- function()
 {	
+	require(recombination.analyzer)
+	
 	verbose		<- 1
 	resume		<- 1
 	indir		<- paste(DATA,"tmp",sep='/')		
@@ -332,6 +335,7 @@ prog.recom.plot.incongruence<- function()
 {
 	require(RColorBrewer)
 	require(ape)
+	require(recombination.analyzer)
 	
 	verbose		<- 1
 	resume		<- 1
@@ -600,6 +604,8 @@ prog.recom.plot.incongruence<- function()
 prog.recom.get.incongruence<- function()
 {	
 	require(ape)
+	require(data.table)
+	require(recombination.analyzer)
 	#default arguments
 	verbose		<- 1
 	resume		<- 0

@@ -1,11 +1,14 @@
-Package: recombination.analyser
+Package: recombination.analyzer
 Version: 1.0-0
 Date: 2013/12/31
 Title: hivclust
 Author: {Oliver Ratmann}
 Maintainer: Oliver Ratmann <oliver.ratmann@imperial.ac.uk>
 Depends:
-    R (>= 2.10)
+    R (>= 2.15),
+    ape,
+    data.table,
+    RColorBrewer
 Description: Tools to identify recombinant sequences among up to 100.000
     sequences based on the 3SEQ program. This package implements an interface
     to high performance computing environments so that a very large number of
