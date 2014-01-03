@@ -1,15 +1,20 @@
-DEST= $(R_LIBS_USER)/recombination.analyzer
-EXTERNAL_CODE= $(DEST)/ext
+DEST:= $(R_LIBS_USER)/recombination.analyzer
+DEST:= $(subst ~,$(HOME),$(DEST))
+EXTERNAL_CODE:= $(DEST)/ext
 CWD= $$(pwd)
 
 all:	
 	echo "current directory is "$(CWD)
-	echo "destination directory for external code is "$(EXTERNAL_CODE)
+	echo "destination directory for external code is "$(EXTERNAL_CODE)			
 	mkdir -p $(EXTERNAL_CODE)
 	@echo "*********************************************** "
 	@echo "********* MAKE DOCUMENTATION ****************** "
 	@echo "*********************************************** "	
-	make roxygen	
+	make roxygen
+	@echo "*********************************************** "
+	@echo "********* MAKE RDATA files ******************** "
+	@echo "*********************************************** "	
+	make rdata				
 	@echo "*********************************************** "
 	@echo "********* BUILDING 3seq *********************** "
 	@echo "*********************************************** "	
@@ -60,4 +65,8 @@ examl:
 	
 make roxygen:
 	echo $(CWD)
-	../misc/3seq.startme.R -exe=ROXYGENIZE
+	../misc/3seq.startme.R -exe=ROXYGENIZE -code.home=$(CWD)/..
+	
+make rdata:
+	echo $(CWD)
+	../misc/3seq.startme.R -exe=MAKE.RDATA -code.home=$(CWD)/..	

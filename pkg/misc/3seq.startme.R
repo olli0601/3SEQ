@@ -10,10 +10,10 @@
 # 	because the R files are re-loaded below
 #
 # usage from R:
-#> setwd("/Users/Oliver/git/recombination-analyzer/pkg")
+#> setwd("/Users/Oliver/git/recombination.analyzer/pkg")
 #> source("misc/3seq.startme.R")
 # usage from bash:
-#> cd /Users/Oliver/git/recombination-analyzer/pkg
+#> cd /Users/Oliver/git/recombination.analyzer/pkg
 #> misc/3seq.startme.R 
 #
 #
@@ -39,15 +39,9 @@ LIB.LOC		<<- NULL
 EPS			<<- 1e-12	#Machine precision	
 
 #the default script to be called if -exe is not specified on the command line
-default.fun 	<- "pipeline.recom"	
+default.fun 	<- "package.neisseria.run.3seq"	
 #default.fun	<- "my.make.documentation"
 #default.fun 	<- "hivc.pipeline.ExaML"
-###############################################################################
-#	re-load all R files
-require(data.table)
-function.list<-c(list.files(path= paste(CODE.HOME,"R",sep='/'), pattern = ".R$", all.files = FALSE,
-		full.names = TRUE, recursive = FALSE),paste(CODE.HOME,"misc","3seq.prjcts.R",sep='/'))
-sapply(function.list,function(x){ source(x,echo=FALSE,print.eval=FALSE, verbose=FALSE) })
 ###############################################################################
 #	select script specified with -exe on the command line. If missing, start default script 'default.fun'.
 argv<- list()
@@ -63,13 +57,21 @@ if(length(args))
 	{
 		if(length(tmp)>1) stop("hivclu.startme.R: duplicate -exe")
 		else default.fun<- switch(tmp[1],
-					ROXYGENIZE				= "my.make.documentation",
+					ROXYGENIZE				= "package.roxygenize",
+					MAKE.RDATA				= "package.generate.rdafiles",
 					BOOTSTRAPSEQ			= "prog.examl.getbootstrapseq",
 					RECOMB.PROCESS3SEQOUT	= "prog.recom.process.3SEQ.output",
 					RECOMB.CHECKCANDIDATES	= "prog.recom.get.incongruence",
 					RECOMB.PLOTINCONGRUENCE	= "prog.recom.plot.incongruence"
 					)
 	}
+	tmp<- na.omit(sapply(args,function(arg)
+					{
+						switch(substr(arg,2,10),
+								code.home= return(substr(arg,12,nchar(arg))),
+								NA)
+					}))	
+	if(length(tmp)!=0)	CODE.HOME<<- tmp[1]
 	tmp<- na.omit(sapply(args,function(arg)
 					{
 						switch(substr(arg,2,6),
@@ -79,6 +81,13 @@ if(length(args))
 	if(length(tmp)!=0)	DEBUG<<- tmp[1]	
 	argv<<- args
 }
+###############################################################################
+#	re-load all R files
+require(data.table)
+print(CODE.HOME)
+function.list<-c(list.files(path= paste(CODE.HOME,"R",sep='/'), pattern = ".R$", all.files = FALSE,
+				full.names = TRUE, recursive = FALSE),paste(CODE.HOME,"misc","3seq.prjcts.R",sep='/'))
+sapply(function.list,function(x){ source(x,echo=FALSE,print.eval=FALSE, verbose=FALSE) })
 ###############################################################################
 #	run script
 if(DEBUG)	options(error= my.dumpframes)	

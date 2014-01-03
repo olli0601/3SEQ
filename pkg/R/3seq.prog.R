@@ -132,7 +132,7 @@ prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 		}
 		file		<- paste(outdir,"/",infile,"_",gsub('/',':',signat.out),".phylip.",sprintf("%03d",bs),sep='')
 		cat(paste("\nsave boostrap seq alignment to",file))
-		hivc.seq.write.dna.phylip(seq.BS, file=file)
+		seq.write.dna.phylip(seq.BS, file=file)
 	}
 	else
 		cat("\nfound boostrap sequence alignment")

@@ -35,10 +35,38 @@ my.mkdir<-function(root,data.name)
 		system(paste("mkdir ",paste(root,data.name,sep='/'),sep=''))
 }
 
-my.make.documentation<- function()
+package.roxygenize<- function()
 {
 	require(roxygen2)		
 	roxygenize(CODE.HOME)
+}
+
+package.generate.rdafiles<- function()
+{
+	require(ape)
+	files	<- c( 	'mtDNA','den2','neisseria'	)
+	dummy	<- lapply(files, function(x)
+			{
+				cat(paste('\nprocess',x))
+				file	<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
+				seq		<- read.dna(file, format='sequential')
+				file	<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
+				cat(paste('\nsave seq to file=',file))
+				save(seq, file=file)				
+			})		
+	files	<- c('nz_h1n1','nz_h3n2')
+	dummy	<- lapply(files, function(x)
+			{
+				cat(paste('\nprocess',x))
+				file	<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
+				seq		<- read.dna(file, format='interleaved')
+				file	<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
+				cat(paste('\nsave seq to file=',file))
+				save(seq, file=file)				
+			})
+	
+	
+	data(package='recombination.analyzer')			
 }
 
 my.fade.col<-function(col,alpha=0.5)

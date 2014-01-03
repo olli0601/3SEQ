@@ -5,7 +5,7 @@
 PR.PACKAGE					<- "recombination.analyzer"
 PR.STARTME					<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
 PR.EXAML.BSCREATE			<- paste(PR.STARTME,"-exeBOOTSTRAPSEQ",sep=' ')
-PR.RECOMB.3SEQ				<- system.file(package="hivclust", "ext", "3seq") 
+PR.RECOMB.3SEQ				<- system.file(package=PR.PACKAGE, "ext", "3seq") 
 PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exe=RECOMB.PROCESS3SEQOUT",sep=' ')
 PR.RECOMB.CHECKCANDIDATES	<- paste(PR.STARTME,"-exe=RECOMB.CHECKCANDIDATES",sep=' ')
 PR.RECOMB.PLOTINCONGRUENCE	<- paste(PR.STARTME,"-exe=RECOMB.PLOTINCONGRUENCE",sep=' ')

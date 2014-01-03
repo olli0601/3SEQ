@@ -1,7 +1,7 @@
 Package: recombination.analyzer
 Version: 1.0-0
 Date: 2013/12/31
-Title: hivclust
+Title: recombination.analyzer
 Author: {Oliver Ratmann}
 Maintainer: Oliver Ratmann <oliver.ratmann@imperial.ac.uk>
 Depends:
