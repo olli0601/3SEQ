@@ -17,7 +17,7 @@ HPC.NPROC					<- {tmp<- c(1,4); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
 HPC.MPIRUN					<- {tmp<- c("mpirun","mpiexec"); names(tmp)<- c("debug","cx1.hpc.ic.ac.uk"); tmp}
 HPC.CX1.IMPERIAL			<- "cx1.hpc.ic.ac.uk"		#this is set to system('domainname',intern=T) for the hpc cluster of choice
 HPC.MEM						<- "1750mb"
-HPC.LOAD					<- "module load intel-suite mpi R/2.15"
+HPC.CX1.IMPERIAL.LOAD		<- "module load intel-suite mpi R/2.15"
 
 #generate 3seq command
 #' @export
@@ -430,28 +430,33 @@ cmd.hpcsys<- function()
 	tmp
 }
 
-#add additional high performance computing information 
 #' @export
-cmd.hpcwrapper<- function(cmd, hpcsys= cmd.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=HPC.NPROC[hpcsys], hpc.q=NA)
+cmd.hpcwrapper.cx1.ic.ac.uk<- function(hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=1, hpc.q=NA)
 {
 	wrap<- "#!/bin/sh"
-	#hpcsys<- HPC.CX1.IMPERIAL
-	if(hpcsys==HPC.CX1.IMPERIAL)
-	{				
-		tmp	<- paste("#PBS -l walltime=",hpc.walltime,":59:59,pcput=",hpc.walltime,":45:00",sep='')
-		wrap<- paste(wrap, tmp, sep='\n')		
-		tmp	<- paste("#PBS -l select=1:ncpus=",hpc.nproc,":mem=",hpc.mem,sep='')
-		wrap<- paste(wrap, tmp, sep='\n')
-		wrap<- paste(wrap, "#PBS -j oe", sep='\n')
-		if(!is.na(hpc.q))
-			wrap<- paste(wrap, paste("#PBS -q",hpc.q), sep='\n\n')
-		wrap<- paste(wrap, HPC.LOAD, sep='\n')
-	}
-	else if(hpcsys=='debug')
-		cat(paste("\ndetected no HPC system and no hpcwrapper generated, domain name is",hpcsys))
+	tmp	<- paste("#PBS -l walltime=",hpc.walltime,":59:59,pcput=",hpc.walltime,":45:00",sep='')
+	wrap<- paste(wrap, tmp, sep='\n')		
+	tmp	<- paste("#PBS -l select=1:ncpus=",hpc.nproc,":mem=",hpc.mem,sep='')
+	wrap<- paste(wrap, tmp, sep='\n')
+	wrap<- paste(wrap, "#PBS -j oe", sep='\n')
+	if(!is.na(hpc.q))
+		wrap<- paste(wrap, paste("#PBS -q",hpc.q), sep='\n\n')
+	wrap<- paste(wrap, HPC.CX1.IMPERIAL.LOAD, sep='\n')
+	wrap
+}
+
+#add additional high performance computing information 
+#' @export
+cmd.hpcwrapper<- function(cmd, hpc.sys= cmd.hpcsys(), hpc.walltime=24, hpc.mem=HPC.MEM, hpc.nproc=1, hpc.q=NA)
+{	
+	#hpc.sys<- HPC.CX1.IMPERIAL
+	if(hpc.sys==HPC.CX1.IMPERIAL)
+		wrap<- cmd.hpcwrapper.cx1.ic.ac.uk(hpc.walltime=hpc.walltime, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc, hpc.q=hpc.q)
 	else
-		stop(paste("unknown hpc system with domain name",hpcsys))
-	
+	{
+		wrap<- "#!/bin/sh"
+		cat(paste("\ndetected no HPC system and no hpcwrapper generated, domain name is",hpc.sys))
+	}
 	cmd<- lapply(seq_along(cmd),function(i){	paste(wrap,cmd[[i]],sep='\n')	})
 	if(length(cmd)==1)
 		cmd<- unlist(cmd)
@@ -475,7 +480,7 @@ cmd.hpccaller<- function(outdir, outfile, cmd)
 	else
 	{
 		file	<- paste(outdir,'/',outfile,'.sh',sep='')
-		cat(paste("\nwrite Shell script to\n",file,"\nStart this shell file manually\n"))
+		cat(paste("\nwrite Shell script to\n",file,"\nNo 'qsub' function detected to submit the shell script automatically.\nStart this shell file manually\n"))
 		cat(cmd,file=file)
 		Sys.chmod(file, mode = "777")		
 	}

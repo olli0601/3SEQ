@@ -18,7 +18,7 @@
 #' @example example/package.neisseria.run.3seq.R
 #' @example example/package.mtDNA.run.3seq.R
 #' @export
-pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.walltime=35, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=1, verbose=1)
+pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.sys= cmd.hpcsys(), hpc.walltime=35, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=1, verbose=1)
 {
 	#load sequences into 'seq' object 
 	if(!grepl('.R',infile))							stop("expect R infile that ends in .R")		
@@ -43,7 +43,7 @@ pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.walltime=35, 
 	lapply(seq_len(ncol(batch.seq)),function(j)
 			{					
 				cmd			<- cmd.recombination.run.3seq(infile=file, outfile=paste(indir,'/',infile,'_',batch.seq[1,j],'-',batch.seq[2,j],".3seq",sep=''), recomb.3seq.siglevel=0.1, nproc=1, recomb.3seq.testvsall.beginatseq=batch.seq[1,j], recomb.3seq.testvsall.endatseq=batch.seq[2,j], verbose=1)				
-				cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem,  hpc.nproc=hpc.nproc)
+				cmd			<- cmd.hpcwrapper(cmd, hpc.sys=hpc.sys, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem,  hpc.nproc=hpc.nproc)
 				if(verbose)	cat(cmd)
 				outdir		<- indir
 				outfile		<- paste("r3seq",paste(strsplit(date(),split=' ')[[1]],collapse='_',sep=''),sep='.')									
