@@ -44,13 +44,14 @@ package.roxygenize<- function()
 package.generate.rdafiles<- function()
 {
 	require(ape)
-	files	<- c( 	'mtDNA','den2','neisseria'	)
+	files	<- c('mtDNA','den2','neisseria'	)
 	dummy	<- lapply(files, function(x)
 			{
 				cat(paste('\nprocess',x))
-				file	<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
-				seq		<- read.dna(file, format='sequential')
-				file	<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
+				file			<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
+				seq				<- read.dna(file, format='sequential')
+				rownames(seq)	<- gsub('\\s','',rownames(seq))
+				file			<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
 				cat(paste('\nsave seq to file=',file))
 				save(seq, file=file)				
 			})		
@@ -58,15 +59,13 @@ package.generate.rdafiles<- function()
 	dummy	<- lapply(files, function(x)
 			{
 				cat(paste('\nprocess',x))
-				file	<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
-				seq		<- read.dna(file, format='interleaved')
-				file	<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
+				file			<- paste(CODE.HOME,'/data/',x,'.phylip',sep='')				
+				seq				<- read.dna(file, format='interleaved')
+				rownames(seq)	<- gsub('\\s','',rownames(seq))
+				file			<- paste(CODE.HOME,'/data/',x,'.rda',sep='')
 				cat(paste('\nsave seq to file=',file))
 				save(seq, file=file)				
 			})
-	
-	
-	data(package='recombination.analyzer')			
 }
 
 my.fade.col<-function(col,alpha=0.5)

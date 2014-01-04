@@ -138,6 +138,15 @@ prog.examl.getbootstrapseq<- function(check.any.bs.identical=0)
 		cat("\nfound boostrap sequence alignment")
 }
 ######################################################################################
+#' @title Return \code{3SEQ} output as a data.table 
+#' @description Collect \code{3SEQ} output of multiple, consecutive job files for a given set of sequences 
+#' in file \code{infile} in directory \code{indir}. The \code{3SEQ} output must cover all sequences in 
+#' \code{infile}. Input parameters are 'indir', 'infile', 'resume' and 'verbose', and specified via an 
+#' \code{argv} string, see the Examples.
+#' @return Data table of potential recombinant sequences and associated parent sequences that are identified at a 
+#' given p-value that is corrected for multiple comparisons.
+#' @seealso \code{\link{pipeline.recom.run.3seq}}
+#' @example example/package.mtDNA.process.3seq.R
 #' @export
 prog.recom.process.3SEQ.output<- function()
 {	
@@ -145,9 +154,8 @@ prog.recom.process.3SEQ.output<- function()
 	
 	verbose		<- 1
 	resume		<- 1
-	indir		<- paste(DATA,"tmp",sep='/')		
+	indir		<- getwd()		
 	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"			
-	insignat	<- "Thu_Aug_01_17/05/23_2013"
 	
 	if(exists("argv"))
 	{
@@ -158,11 +166,7 @@ prog.recom.process.3SEQ.output<- function()
 		tmp<- na.omit(sapply(argv,function(arg)
 						{	switch(substr(arg,2,7),
 									infile= return(substr(arg,9,nchar(arg))),NA)	}))
-		if(length(tmp)>0) infile<- tmp[1]				
-		tmp<- na.omit(sapply(argv,function(arg)
-						{	switch(substr(arg,2,9),
-									insignat= return(substr(arg,11,nchar(arg))),NA)	}))
-		if(length(tmp)>0) insignat<- tmp[1]	
+		if(length(tmp)>0) infile<- tmp[1]						
 		#		
 		tmp<- na.omit(sapply(argv,function(arg)
 						{	switch(substr(arg,2,7),
@@ -178,16 +182,22 @@ prog.recom.process.3SEQ.output<- function()
 		print(verbose)
 		print(resume)
 		print(indir)		
-		print(infile)			
-		print(insignat)			
+		print(infile)				
 	}
-	file		<- paste(indir,'/',infile,'_', gsub('/',':',insignat),".R",sep='')
+	#load sequences as 'seq' object
+	if(!grepl('.R',infile))							stop("expect R infile that ends in .R")
+	file		<- paste(indir,'/',infile,sep='')
 	if(verbose)	cat(paste("\nload file ",file))			
-	load(file)
-	#loaded seq.PROT.RT
+	tmp			<- load(file)
+	if(verbose)	cat(paste('\nloaded file=', tmp))
+	if(tmp!='seq')
+		eval(parse(text=paste("seq<- ",tmp,sep='')))
+	if(!"DNAbin"%in%class(seq) || !is.matrix(seq))	stop("expect R infile that contains a DNAbin matrix")
+	infile		<- substr(infile, 1, nchar(infile)-2)
+	#resume if possible
+	file		<- paste(indir,'/',infile,"_3seq",".R",sep='')
 	if(resume)
-	{
-		file		<- paste(indir,'/',infile,"_3seq_", gsub('/',':',insignat),".R",sep='')		
+	{				
 		options(show.error.messages = FALSE)		
 		if(verbose)	cat(paste("\ntry to resume file ",file))
 		readAttempt<-	try(suppressWarnings(load(file)))
@@ -196,13 +206,15 @@ prog.recom.process.3SEQ.output<- function()
 	}
 	if(!resume || inherits(readAttempt, "try-error"))
 	{
-		if(verbose)	cat(paste("\ngenerate file ",file))			
+		if(verbose)	cat(paste("\ngenerate file ",file))
+		#	collect 3SEQ output files
 		tmp			<- list.files(indir, pattern="3seq$")
-		files		<- tmp[grepl(infile, tmp, fixed=1) & grepl(gsub('/',':',insignat), tmp)]
-		tmp			<- sapply(strsplit(files,'_'), function(x) rev(x)[6] )		#see if filename has '_xx-xx_' string at pos 6 from end  
+		files		<- tmp[grepl(infile, tmp, fixed=1)]
+		tmp			<- sapply(strsplit(files,'.', fixed=1), function(x) x[[1]] )
+		tmp			<- sapply(strsplit(tmp,'_'), function(x) tail(x,1) )		#see if filename has '_xx-xx' string at last pos  
 		files		<- files[grepl('-', tmp)]		
 		if(verbose)	cat(paste("\nFound 3seq output files matching infile and insignat, n=",length(files)))
-		#	figure out if any consecutive files are missing
+		#	figure out if any consecutive files are missing	
 		tmp			<- tmp[grepl('-', tmp)]
 		df.seqchunks<- as.data.table( t( sapply( strsplit(tmp, '-'), as.numeric) ) )
 		setnames(df.seqchunks, c("V1","V2"), c("start","end"))
@@ -282,8 +294,8 @@ prog.recom.process.3SEQ.output<- function()
 		df.recomb[, bp1.1:= sapply(tmp, "[", 1)]
 		df.recomb[, bp1.2:= sapply(tmp, "[", 2)]
 		set(df.recomb, NULL, "bp1.1", round( sapply(strsplit(df.recomb[,bp1.1], '-'), function(x)	mean(as.numeric(x))	) ) )
-		set(df.recomb, NULL, "bp1.2", round( sapply(strsplit(df.recomb[,bp1.2], '-'), function(x)	min(as.numeric(x))	) ) )
-		df.recomb	<- merge(df.recomb, df.recomb[, list(child.len=max(which(as.character(seq.PROT.RT[child,])!='-'))), by="dummy"], by="dummy" )
+		set(df.recomb, NULL, "bp1.2", round( sapply(strsplit(df.recomb[,bp1.2], '-'), function(x)	min(as.numeric(x))	) ) )		
+		df.recomb	<- merge(df.recomb, df.recomb[, list(child.len=max(which(as.character(seq[child,])!='-'))), by="dummy"], by="dummy" )
 		if(any(df.recomb[, child.len-bp1.2]<0))	stop("\nunexpected breakpoint past end of child sequence")
 		df.recomb[, child.start:= 1]
 		tmp			<- which( df.recomb[, bp1.1<10] )
@@ -291,7 +303,7 @@ prog.recom.process.3SEQ.output<- function()
 		tmp			<- which( df.recomb[, child.len-bp1.2<25] )
 		set(df.recomb, tmp, "child.len", as.integer(df.recomb[tmp, bp1.2]))
 		#	save potential recombinants
-		file		<- paste(indir,'/',infile,"_3seq_", gsub('/',':',insignat),".R",sep='')
+		file		<- paste(indir,'/',infile,"_3seq",".R",sep='')
 		if(verbose)	cat(paste("\nSave candidate triplets to",file))
 		save(df.recomb, file=file)		
 	}
