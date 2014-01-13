@@ -2,11 +2,17 @@ DEST:= $(R_LIBS_USER)/recombination.analyzer
 DEST:= $(subst ~,$(HOME),$(DEST))
 EXTERNAL_CODE:= $(DEST)/ext
 CWD= $$(pwd)
+PVT_EXISTS:= $(shell [ -s ../inst/PVT_COMPACT_700.tgz ] && echo yes )
 
 all:	
 	echo "current directory is "$(CWD)
-	echo "destination directory for external code is "$(EXTERNAL_CODE)			
+	echo "destination directory for external code is "$(EXTERNAL_CODE)
+	echo $(PVT_EXISTS)			
 	mkdir -p $(EXTERNAL_CODE)
+	@echo "*********************************************** "
+	@echo "********* DOWNLOAD 3seq pvalues *************** "
+	@echo "*********************************************** "	
+	make get_PVT_COMPACT_700				
 	@echo "*********************************************** "
 	@echo "********* MAKE DOCUMENTATION ****************** "
 	@echo "*********************************************** "	
@@ -14,7 +20,7 @@ all:
 	@echo "*********************************************** "
 	@echo "********* MAKE RDATA files ******************** "
 	@echo "*********************************************** "	
-	make rdata				
+	make rdata	
 	@echo "*********************************************** "
 	@echo "********* BUILDING 3seq *********************** "
 	@echo "*********************************************** "	
@@ -31,6 +37,16 @@ all:
 	@echo "********* BUILDING ExaML ********************** "
 	@echo "*********************************************** "	
 	make examl	
+	
+get_PVT_COMPACT_700:
+ifeq (yes, $(PVT_EXISTS))
+	$(info PVT_COMPACT_700.tgz found)
+else	
+	$(info PVT_COMPACT_700.tgz not found)
+	curl -O https://dl.dropboxusercontent.com/u/5271559/PVT_COMPACT_700
+	mv $(CWD)/PVT_COMPACT_700 ../inst/PVT_COMPACT_700.tgz
+endif
+	
 	
 3seq:
 	echo $(CWD)	
