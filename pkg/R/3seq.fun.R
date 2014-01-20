@@ -1,33 +1,4 @@
-#' this file contains all R functions of the R package
-#' @import ape
-#' @import RColorBrewer
-#' @import data.table	
 
-#' @export
-seq.write.dna.phylip<- function(seq.DNAbin.mat, file)
-{		
-	tmp<- cbind( rownames(seq.DNAbin.mat), apply( as.character( seq.DNAbin.mat ), 1, function(x) paste(x,sep='',collapse='')  ) )
-	tmp<- paste(t(tmp),collapse='\n',sep='')	
-	tmp<- paste( paste(c(nrow(seq.DNAbin.mat),ncol(seq.DNAbin.mat)),sep='',collapse=' '),'\n',tmp,'\n',collapse='',sep='' )
-	cat(tmp, file=file)
-}
-
-hivc.seq.find<- function(char.matrix, pos0= NA, from= c(), verbose=1)
-{
-	if(is.na(pos0)) 	stop("start position of token to be replaced is missing")
-	if(!length(from))	stop("token to be replaced is missing")
-	query.colidx	<- seq.int(pos0,pos0+length(from)-1)
-	query.yes		<- which( apply(char.matrix, 1, function(x)	all(x[query.colidx]==from) ) )
-	query.yes	
-}
-
-#' @export
-hivc.seq.unique<- function(seq.DNAbin.matrix)
-{
-	x<- as.character(seq.DNAbin.matrix)
-	x<- apply(x, 1, function(z) paste(z,collapse=''))
-	seq.DNAbin.matrix[!duplicated(x),]			
-}
 ######################################################################################
 hivc.clu.polyphyletic.clusters<- function(cluphy.df, cluphy.subtrees=NULL, ph=NULL, clustering=NULL, verbose=1, plot.file=NA, pdf.scaley=25, pdf.xlim=NULL, cex.nodelabel=0.2, cex.tiplabel=0.2, adj.tiplabel= c(-0.15,0.5))
 {

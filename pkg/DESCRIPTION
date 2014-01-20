@@ -8,7 +8,8 @@ Depends:
     R (>= 2.15),
     ape,
     data.table,
-    RColorBrewer
+    RColorBrewer,
+    big.phylo
 Description: Tools to identify recombinant sequences among up to 100.000
     sequences based on the 3SEQ program. This package implements an interface
     to high performance computing environments so that a very large number of

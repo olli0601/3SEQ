@@ -16,7 +16,7 @@ all:
 	@echo "*********************************************** "
 	@echo "********* MAKE RDATA files ******************** "
 	@echo "*********************************************** "	
-	make rdata	
+	make rdata								
 	@echo "*********************************************** "
 	@echo "********* DOWNLOAD 3seq pvalues *************** "
 	@echo "*********************************************** "	
@@ -25,18 +25,6 @@ all:
 	@echo "********* BUILDING 3seq *********************** "
 	@echo "*********************************************** "	
 	make 3seq		
-	@echo "*********************************************** "
-	@echo "********* BUILDING standard-RAxML ************* "
-	@echo "*********************************************** "	
-	make ExaML-raxml	
-	@echo "*********************************************** "
-	@echo "********* BUILDING ExaML-parsimonator ********* "
-	@echo "*********************************************** "	
-	make EXAML-parsimonator
-	@echo "*********************************************** "
-	@echo "********* BUILDING ExaML ********************** "
-	@echo "*********************************************** "	
-	make examl	
 	
 get_PVT_COMPACT_700:
 ifeq (yes, $(PVT_EXISTS))
@@ -46,7 +34,13 @@ else
 	curl -O https://dl.dropboxusercontent.com/u/5271559/PVT_COMPACT_700
 	mv $(CWD)/PVT_COMPACT_700 ../inst/PVT_COMPACT_700.tgz
 endif
-	
+
+big.phylo:
+	echo $(CWD)	
+	git clone https://github.com/olli0601/big.phylo.git
+	R CMD build $(CWD)/big.phylo/pkg
+	R CMD install $(CWD)/big.phylo/big.phylo_1.0-0.tar.gz
+	rm -rf $(CWD)/big.phylo
 	
 3seq:
 	echo $(CWD)	
