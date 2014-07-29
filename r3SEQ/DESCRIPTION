@@ -2,7 +2,7 @@ Package: r3SEQ
 Version: 1.0-0
 Date: 2013/12/31
 Title: r3SEQ
-Author: {Oliver Ratmann}
+Author: {Ha Minh Lam, Oliver Ratmann, Maciej F. Boni}
 Maintainer: Oliver Ratmann <oliver.ratmann@imperial.ac.uk>
 Depends:
     R (>= 2.15),

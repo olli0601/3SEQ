@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>3Seq-core</name>
+            <c-extensions/>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList/>
+            <confList>
+                <confElem>
+                    <name>Release</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Debug</name>
+                    <type>1</type>
+                </confElem>
+                <confElem>
+                    <name>Profile</name>
+                    <type>1</type>
+                </confElem>
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+        <spellchecker-wordlist xmlns="http://www.netbeans.org/ns/spellchecker-wordlist/1">
+            <word>biallelic</word>
+            <word>Bonferroni</word>
+            <word>config</word>
+            <word>Fasta</word>
+            <word>hypergeometric</word>
+            <word>monoallelic</word>
+            <word>nullable</word>
+            <word>Phylip</word>
+            <word>Sidak</word>
+            <word>tetrallelic</word>
+            <word>triallelic</word>
+        </spellchecker-wordlist>
+    </configuration>
+</project>

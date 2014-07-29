@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="f2" displayName="Data Units" projectFiles="true">
+        <itemPath>Genome.h</itemPath>
+        <itemPath>GenomeSet.h</itemPath>
+        <itemPath>Nucleotide.h</itemPath>
+        <itemPath>Segment.h</itemPath>
+        <itemPath>Sequence.h</itemPath>
+        <itemPath>Triplet.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="Run Types" projectFiles="true">
+        <itemPath>CheckPRun.h</itemPath>
+        <itemPath>FullRun.h</itemPath>
+        <itemPath>GenPRun.h</itemPath>
+        <itemPath>HelpRun.h</itemPath>
+        <itemPath>InfoRun.h</itemPath>
+        <itemPath>MatchRun.h</itemPath>
+        <itemPath>Run.h</itemPath>
+        <itemPath>SingleBpRun.h</itemPath>
+        <itemPath>TripletRun.h</itemPath>
+        <itemPath>VersionRun.h</itemPath>
+        <itemPath>WriteRun.h</itemPath>
+      </logicalFolder>
+      <itemPath>Interface.h</itemPath>
+      <itemPath>PTable.h</itemPath>
+      <itemPath>PTableFile.h</itemPath>
+      <itemPath>SequenceFile.h</itemPath>
+      <itemPath>String.h</itemPath>
+      <itemPath>TextFile.h</itemPath>
+      <itemPath>Util.h</itemPath>
+      <itemPath>config.h</itemPath>
+      <itemPath>stats.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="Libraries" displayName="Libraries" projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <logicalFolder name="f2" displayName="Data Units" projectFiles="true">
+        <itemPath>Genome.cpp</itemPath>
+        <itemPath>GenomeSet.cpp</itemPath>
+        <itemPath>Nucleotide.cpp</itemPath>
+        <itemPath>Segment.cpp</itemPath>
+        <itemPath>Sequence.cpp</itemPath>
+        <itemPath>Triplet.cpp</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f1" displayName="Run Types" projectFiles="true">
+        <itemPath>CheckPRun.cpp</itemPath>
+        <itemPath>FullRun.cpp</itemPath>
+        <itemPath>GenPRun.cpp</itemPath>
+        <itemPath>HelpRun.cpp</itemPath>
+        <itemPath>InfoRun.cpp</itemPath>
+        <itemPath>MatchRun.cpp</itemPath>
+        <itemPath>Run.cpp</itemPath>
+        <itemPath>SingleBpRun.cpp</itemPath>
+        <itemPath>TripletRun.cpp</itemPath>
+        <itemPath>VersionRun.cpp</itemPath>
+        <itemPath>WriteRun.cpp</itemPath>
+      </logicalFolder>
+      <itemPath>3Seq.cpp</itemPath>
+      <itemPath>Interface.cpp</itemPath>
+      <itemPath>PTable.cpp</itemPath>
+      <itemPath>PTableFile.cpp</itemPath>
+      <itemPath>SequenceFile.cpp</itemPath>
+      <itemPath>String.cpp</itemPath>
+      <itemPath>TextFile.cpp</itemPath>
+      <itemPath>Util.cpp</itemPath>
+      <itemPath>stats.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="TestFiles"
+                   displayName="Test Files"
+                   projectFiles="true"
+                   kind="TEST_LOGICAL_FOLDER">
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>bash_completion/3seq.bash</itemPath>
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>0</warningLevel>
+        </cTool>
+        <ccTool>
+          <developmentMode>6</developmentMode>
+          <warningLevel>0</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>0</developmentMode>
+        </fortranCompilerTool>
+        <asmTool>
+          <developmentMode>6</developmentMode>
+          <warningLevel>0</warningLevel>
+        </asmTool>
+        <linkerTool>
+          <output>3seq</output>
+        </linkerTool>
+      </compileType>
+      <packaging>
+        <packType>Zip</packType>
+        <output>${CND_DISTDIR}/${CND_CONF}/package/3seq.zip</output>
+        <packFileList>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+        </packFileList>
+      </packaging>
+      <item path="3Seq.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FullRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FullRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Genome.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Genome.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenomeSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenomeSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="HelpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HelpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InfoRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InfoRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Interface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatchRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatchRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Nucleotide.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Nucleotide.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTableFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTableFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Run.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Run.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Segment.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Segment.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Sequence.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Sequence.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SequenceFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SequenceFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SingleBpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SingleBpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="String.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="String.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TextFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TextFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Triplet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Triplet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripletRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TripletRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VersionRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VersionRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WriteRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WriteRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="stats.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stats.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>0</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/3seq-debug</output>
+        </linkerTool>
+      </compileType>
+      <packaging>
+        <packType>Zip</packType>
+        <output>${CND_DISTDIR}/${CND_CONF}/package/3seq.zip</output>
+        <packFileList>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+        </packFileList>
+      </packaging>
+      <item path="3Seq.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FullRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FullRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Genome.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Genome.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenomeSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenomeSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="HelpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HelpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InfoRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InfoRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Interface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatchRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatchRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Nucleotide.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Nucleotide.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTableFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTableFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Run.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Run.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Segment.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Segment.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Sequence.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Sequence.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SequenceFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SequenceFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SingleBpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SingleBpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="String.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="String.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TextFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TextFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Triplet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Triplet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripletRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TripletRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VersionRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VersionRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WriteRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WriteRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="stats.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stats.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+    <conf name="Profile" type="1">
+      <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>true</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <warningLevel>0</warningLevel>
+        </cTool>
+        <ccTool>
+          <commandLine>-pg</commandLine>
+          <warningLevel>2</warningLevel>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>0</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <output>${CND_DISTDIR}/3seq-profile</output>
+        </linkerTool>
+      </compileType>
+      <packaging>
+        <packType>Zip</packType>
+        <output>${CND_DISTDIR}/${CND_CONF}/package/3seq.zip</output>
+        <packFileList>
+          <packFileListElem type="File"
+                            to="${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}"
+                            from="${OUTPUT_PATH}"
+                            perm="755"
+                            owner="root"
+                            group="bin"/>
+        </packFileList>
+      </packaging>
+      <item path="3Seq.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="CheckPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="FullRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="FullRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenPRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenPRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Genome.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Genome.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="GenomeSet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="GenomeSet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="HelpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HelpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="InfoRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="InfoRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Interface.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Interface.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="MatchRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="MatchRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Nucleotide.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Nucleotide.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTable.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTable.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="PTableFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="PTableFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Run.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Run.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Segment.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Segment.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Sequence.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Sequence.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SequenceFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SequenceFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="SingleBpRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="SingleBpRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="String.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="String.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TextFile.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TextFile.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Triplet.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Triplet.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="TripletRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="TripletRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="Util.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="Util.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="VersionRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="VersionRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="WriteRun.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="WriteRun.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="config.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="stats.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="stats.h" ex="false" tool="3" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
