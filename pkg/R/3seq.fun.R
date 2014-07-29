@@ -1,4 +1,163 @@
-
+######################################################################################
+r3seq.guess.related.sequences<- function(triplet, seq, seq.select.n, seq.select.f=5, verbose=10)
+{
+	#	create sequence matrices corresponding to the two breakpoint regions 
+	seq.in		<- seq[,seq.int(triplet[,bp1.1],triplet[,bp1.2])]
+	seq.out		<- if(triplet[,child.start]<triplet[,bp1.1]-1) seq.int(triplet[,child.start],triplet[,bp1.1]-1) else numeric(0) 
+	seq.out		<- if(triplet[,bp1.2]+1<triplet[,child.len]) c(seq.out,seq.int(triplet[,bp1.2]+1, triplet[,child.len]))	else 	seq.out
+	seq.out		<- seq[,seq.out]
+	seq.select.f<- ifelse(min(ncol(seq.out),ncol(seq.in))<150, seq.select.f, seq.select.f)
+	if(verbose)	cat(paste("\nsetting inflation factor to",seq.select.f))
+	if(is.na(seq.select.n))
+		seq.select.n<- 10 * seq.select.f		
+	#	select background sequences for child based on sequence similarity
+	if(verbose)	cat(paste("\ncompute genetic distances for parent1 parent2 child"))
+	tmp				<- which( rownames(seq)==triplet[,child] )			
+	seq.dist					<- sapply(seq_len(nrow(seq.in))[-tmp],function(i){		seq.dist.pairwise( seq.in[tmp,], seq.in[i,])	})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="child", region="in" ) 		
+	seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		seq.dist.pairwise(seq.out[tmp,], seq.out[i,])	})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="child", region="out" )) 
+	#	select background sequences for parent1 based on sequence similarity
+	tmp				<- which( rownames(seq)==triplet[,parent1] )				
+	seq.dist					<- 1 - sapply(seq_len(nrow(seq.in))[-tmp],function(i){		seq.dist.pairwise(seq.in[tmp,], seq.in[i,])		})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- rbind(seq.df,data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="parent1", region="in" )) 		
+	seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		seq.dist.pairwise( seq.out[tmp,], seq.out[i,])		})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="parent1", region="out" )) 
+	#	select background sequences for parent2 based on sequence similarity
+	tmp				<- which( rownames(seq)==triplet[,parent2] )				
+	seq.dist					<- 1 - sapply(seq_len(nrow(seq.in))[-tmp],function(i){		seq.dist.pairwise(seq.in[tmp,], seq.in[i,])			})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- rbind(seq.df,data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="parent2", region="in" )) 		
+	seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		seq.dist.pairwise(seq.out[tmp,], seq.out[i,])	})	
+	seq.dist[is.nan(seq.dist)]	<- Inf
+	seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="parent2", region="out" ))
+	#	first pass:
+	#	select closest FASTASampleCode by group and region to verify recombination breakpoint by phylogenetic incongruence
+	setkeyv(seq.df, c("group","region","dist"))
+	seq.df			<- subset(seq.df, dist>0)
+	if(verbose)	cat(paste("\nFound related sequences with dist>0, n=",length(seq.df[,unique(FASTASampleCode)])))
+	#	for each group and region, select the n closest sequence names (non-unique)
+	seq.df			<- seq.df[	,	list(FASTASampleCode=FASTASampleCode[seq_len(seq.select.n)], dist=dist[seq_len(seq.select.n)]), by=c("group","region")]
+	#	keep each sequence name once, for the group it is closest to		
+	seq.df			<- seq.df[, {
+				tmp<- which.min(dist)
+				list(dist= dist[tmp], group=group[tmp], region=region[tmp])
+			}, by=c("FASTASampleCode")]
+	setkeyv(seq.df, c("group","region","dist"))					
+	if(verbose)	cat(paste("\ndetermined candidates for balancing filler sequences, n=",nrow(seq.df)))
+	#	select unique sequences
+	tmp				<- c( triplet[,parent1],triplet[,parent2],triplet[,child], seq.df[, FASTASampleCode] )
+	tmp				<- seq.unique(seq.in[tmp,])
+	seq.df			<- merge( data.table(FASTASampleCode=rownames(tmp)), seq.df, by="FASTASampleCode" )
+	tmp				<- c( triplet[,parent1],triplet[,parent2],triplet[,child], seq.df[, FASTASampleCode] )
+	tmp				<- seq.unique(seq.out[tmp,])
+	seq.df			<- merge( data.table(FASTASampleCode=rownames(tmp)), seq.df, by="FASTASampleCode" )
+	seq.df			<- subset(seq.df, !FASTASampleCode%in%c( triplet[,parent1],triplet[,parent2],triplet[,child] ) )		
+	if(verbose)	cat(paste("\nfound candidates for filler sequences that are unique on both recombinant regions, n=",nrow(seq.df)))
+	if(verbose)	print( seq.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
+	#		
+	seq.select.n	<- seq.select.n/seq.select.f 
+	#	select 'seq.select.n' unique filler sequences for 'in' region, balancing by group as much as possible
+	if(verbose)	cat(paste("\nSelect filler sequences for recombinant region 'in'"))
+	tmp						<- subset( seq.df, region=='in' )[,FASTASampleCode]
+	tmp						<- seq.unique(seq.in[tmp ,])
+	seq.in.df				<- merge( data.table(FASTASampleCode=rownames(tmp)), subset(seq.df,region=="in"), by="FASTASampleCode" )
+	setkey(seq.in.df, dist)
+	if(nrow(seq.in.df)<seq.select.n)	cat(paste("\ncan only select less than the requested number of sequences, n=",nrow(seq.in.df)))
+	tmp						<- rbind( seq.in.df, data.table(FASTASampleCode=NA, dist=NA, group=c("child","parent1","parent2"), region=NA) )
+	seq.in.order			<- tmp[	,	list(n=length(na.omit(FASTASampleCode))) ,by=c("group")]		
+	seq.in.order			<- seq.in.order[order(n),]
+	overflow				<- 0
+	ans						<- data.table(FASTASampleCode=NA, dist=NA, group=NA, region=NA)
+	for(x in seq.in.order[,group])
+	{			
+		#print(x)
+		tmp					<- subset(seq.in.df, group==x)
+		#print(tmp)
+		ans					<- rbind(tmp[seq_len( min(seq.select.n+overflow, nrow(tmp)) ),], ans )
+		overflow			<- ifelse(seq.select.n+overflow<nrow(tmp), 0, seq.select.n+overflow-nrow(tmp))
+	}
+	if(overflow>0)	cat(paste("\nNot as many filler sequences as requested for recombinant region 'in', n=",nrow(seq.in.df)))
+	seq.in.df				<- ans[-nrow(ans),]
+	if(verbose)	cat(paste("\nSelected balancing sequences for recombinant region 'in', n=",nrow(seq.in.df)))
+	if(verbose)	print( seq.in.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
+	#
+	#	select 'seq.select.n' unique filler sequences for 'out' region, balancing by group as much as possible
+	#
+	if(verbose)	cat(paste("\nSelect sequences for recombinant region 'out'"))
+	tmp						<- subset( seq.df, region=='out' )[,FASTASampleCode] 
+	tmp						<- seq.unique(seq.out[tmp,])		
+	seq.out.df				<- merge( data.table(FASTASampleCode=rownames(tmp)), subset(seq.df,region=="out"), by="FASTASampleCode" )
+	setkey(seq.out.df, dist)
+	if(nrow(seq.out.df)<seq.select.n)	cat(paste("\ncan only select less than the requested number of sequences, n=",nrow(seq.out.df)))
+	tmp						<- rbind( seq.out.df, data.table(FASTASampleCode=NA, dist=NA, group=c("child","parent1","parent2"), region=NA) )
+	seq.out.order			<- tmp[	,	list(n=length(FASTASampleCode)) ,by=c("group")]		
+	seq.out.order			<- seq.out.order[order(n),]
+	overflow				<- 0
+	ans						<- data.table(FASTASampleCode=NA, dist=NA, group=NA, region=NA)		
+	for(x in seq.out.order[,group])
+	{			
+		#print(x)
+		tmp					<- subset(seq.out.df, group==x)
+		#print(tmp)
+		ans					<- rbind(tmp[seq_len( min(seq.select.n+overflow, nrow(tmp)) ),], ans )
+		overflow			<- ifelse(seq.select.n+overflow<nrow(tmp), 0, seq.select.n+overflow-nrow(tmp))
+	}
+	if(overflow>0)	cat(paste("\nNot as many filler sequences as requested for recombinant region 'out', n=",nrow(seq.out.df)))
+	seq.out.df				<- ans[-nrow(ans),]
+	if(verbose)	cat(paste("\nSelected balancing sequences for recombinant region 'out', n=",nrow(seq.out.df)))
+	if(verbose)	print( seq.out.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
+	#	combine unique filler sequences
+	seq.df					<- rbind( seq.in.df, seq.out.df )
+	if(verbose)	cat(paste("\nSelected balancing set of closest filler sequences"))
+	if(verbose)	print( seq.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )		
+	if( length(unique( seq.df[, FASTASampleCode] ))!=nrow(seq.df) )		stop("Unexpected non-unique sequence names")
+	if( nrow(seq.unique( seq.in[ seq.df[, FASTASampleCode], ] ))!=nrow(seq.df) ) stop("Unexpected non-unique 'in' sequences")
+	if( nrow(seq.unique( seq.out[ seq.df[, FASTASampleCode], ] ))!=nrow(seq.df) ) stop("Unexpected non-unique 'out' sequences")
+	#	could be that the triplet sequences are not unique among each other 
+	#	if so, make change to one of the triplet sequences
+	seq.select				<- c( triplet[,parent1],triplet[,parent2],triplet[,child], seq.df[, FASTASampleCode] )
+	tmp						<- seq.unique( seq.in[ seq.select, ] )
+	if( !length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )
+		seq.in				<- tmp
+	if( length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )
+	{
+		tmp					<- setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp) )		#name of sequence in triplet that is identical with one other sequence in triplet
+		if(verbose)	cat(paste("\nFound identical triplet sequence for region 'in'", tmp))
+		seq.in				<- as.character(seq.in)
+		seq.in[tmp,1]		<- ifelse(seq.in[tmp,1]=='t','c',ifelse(seq.in[tmp,1]=='c','t',ifelse(seq.in[tmp,1]=='a','g','a')))
+		seq.in				<- as.DNAbin(seq.in)
+		tmp					<- seq.unique( seq.in[ seq.select, ] )
+		if( length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )	stop("Unexpected duplicate for 'in'")
+		seq.in				<- tmp
+	}			
+	seq.out					<- seq.out[seq.select,]
+	tmp						<- seq.unique(seq.out)
+	if( !length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )
+		seq.out				<- tmp
+	if( length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )
+	{
+		tmp					<- setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp) )		#name of sequence in triplet that is identical with one other sequence in triplet
+		if(verbose)	cat(paste("\nFound identical triplet sequence for region 'out'", tmp))
+		seq.out				<- as.character(seq.out)
+		seq.out[tmp,1]		<- ifelse(seq.out[tmp,1]=='t','c',ifelse(seq.out[tmp,1]=='c','t',ifelse(seq.out[tmp,1]=='a','g','a')))
+		seq.out				<- as.DNAbin(seq.out)
+		tmp					<- seq.unique(seq.out[seq.select,])
+		if( length(setdiff(c( triplet[,parent1],triplet[,parent2],triplet[,child] ),rownames(tmp))) )	stop("Unexpected duplicate for 'out'")
+		seq.out				<- tmp
+	}
+	if(any(rownames(seq.in)!=rownames(seq.out)))	stop("Unexpected unequal sequences selected")
+	#	reset rownames
+	tmp						<- c( paste(c("tparent1","tparent2","tchild"),seq.select[1:3],sep='_'), seq.df[,list(label= paste(region,group,FASTASampleCode,sep='_')), by="FASTASampleCode"][,label] )
+	rownames(seq.in)		<- tmp
+	rownames(seq.out)		<- tmp
+	
+	list(seq.in=seq.in, seq.out=seq.out)
+}
 ######################################################################################
 hivc.clu.polyphyletic.clusters<- function(cluphy.df, cluphy.subtrees=NULL, ph=NULL, clustering=NULL, verbose=1, plot.file=NA, pdf.scaley=25, pdf.xlim=NULL, cex.nodelabel=0.2, cex.tiplabel=0.2, adj.tiplabel= c(-0.15,0.5))
 {

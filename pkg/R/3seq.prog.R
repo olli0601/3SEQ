@@ -71,8 +71,8 @@ prog.recom.process.3SEQ.output<- function()
 		#	collect 3SEQ output files
 		tmp			<- list.files(indir, pattern="3seq$")
 		files		<- tmp[grepl(infile, tmp, fixed=1)]
-		tmp			<- sapply(strsplit(files,'.', fixed=1), function(x) x[[1]] )
-		tmp			<- sapply(strsplit(tmp,'_'), function(x) tail(x,1) )		#see if filename has '_xx-xx' string at last pos  
+		files		<- sapply( files, function(x) substr(x, 1, nchar(x)-5) )		
+		tmp			<- sapply(strsplit(files,'_'), function(x) tail(x,1) )		#see if filename has '_xx-xx' string at last pos  
 		files		<- files[grepl('-', tmp)]		
 		if(verbose)	cat(paste("\nFound 3seq output files matching infile and insignat, n=",length(files)))
 		#	figure out if any consecutive files are missing	
@@ -85,7 +85,7 @@ prog.recom.process.3SEQ.output<- function()
 		#	determine non-empty files and number of columns		
 		tmp			<- sapply(files, function(x)
 				{
-					tmp	<- count.fields(paste(indir, '/', x, sep=''), skip=1, sep='\t')
+					tmp	<- count.fields(paste(indir, '/', x,'.3seq', sep=''), skip=1, sep='\t')
 					ifelse(length(tmp), max(tmp), 0)			
 				})
 		col.max		<- max(tmp)		
@@ -98,7 +98,7 @@ prog.recom.process.3SEQ.output<- function()
 		df.recomb		<- lapply(files, function(x)
 				{	
 					if(verbose)	cat(paste("\nprocess file", x))
-					tmp					<- read.delim(paste(indir, '/', x, sep=''), skip=1, header=0, fill=1, col.names=col.names, stringsAsFactors=0, strip.white=T)					
+					tmp					<- read.delim(paste(indir, '/', x, '.3seq', sep=''), skip=1, header=0, fill=1, col.names=col.names, stringsAsFactors=0, strip.white=T)					
 					as.data.table(tmp)			
 				})
 		df.recomb		<- rbindlist(df.recomb)
@@ -482,19 +482,19 @@ prog.recom.get.incongruence<- function()
 	#default arguments
 	verbose		<- 1
 	resume		<- 0
-	seq.select.n<- 10
+	seq.select.n<- NA
 	bs.from		<- 0
-	bs.to		<- 499
-	bs.n		<- 500	
+	bs.to		<- 1
+	bs.n		<- 2	
 	hpc.walltime<- 36
 	hpc.mem		<- "600mb"
 	hpc.nproc	<- 1		
 	hpc.q		<- "pqeph"
 	#default job
-	indir		<- paste(DATA,"tmp",sep='/')		
-	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"			
-	insignat	<- "Thu_Aug_01_17/05/23_2013"	
-	id			<- 51	
+	indir		<- paste(DATA,"tmp",sep='/')	
+	outdir		<- NA
+	infile		<- "ATHENA_2013_03_NoDRAll+LANL_Sequences"				
+	id			<- 1	
 	
 	if(exists("argv"))
 	{
@@ -506,10 +506,6 @@ prog.recom.get.incongruence<- function()
 						{	switch(substr(arg,2,7),
 									infile= return(substr(arg,9,nchar(arg))),NA)	}))
 		if(length(tmp)>0) infile<- tmp[1]				
-		tmp<- na.omit(sapply(argv,function(arg)
-						{	switch(substr(arg,2,9),
-									insignat= return(substr(arg,11,nchar(arg))),NA)	}))
-		if(length(tmp)>0) insignat<- tmp[1]	
 		#		
 		tmp<- na.omit(sapply(argv,function(arg)
 						{	switch(substr(arg,2,7),
@@ -524,6 +520,10 @@ prog.recom.get.incongruence<- function()
 						{	switch(substr(arg,2,10),
 									tripletid= return(as.numeric(substr(arg,12,nchar(arg)))),NA)	}))
 		if(length(tmp)>0) id<- tmp[1]
+		tmp<- na.omit(sapply(argv,function(arg)
+						{	switch(substr(arg,2,13),
+									seq.select.n= return(as.numeric(substr(arg,15,nchar(arg)))),NA)	}))
+		if(length(tmp)>0) seq.select.n<- tmp[1]		
 		#
 		tmp<- na.omit(sapply(argv,function(arg)
 						{	switch(substr(arg,2,13),
@@ -540,8 +540,10 @@ prog.recom.get.incongruence<- function()
 		tmp<- na.omit(sapply(argv,function(arg)
 						{	switch(substr(arg,2,10),
 									hpc.nproc= return(as.numeric(substr(arg,12,nchar(arg)))),NA)	}))
-		if(length(tmp)>0) hpc.nproc<- tmp[1]
+		if(length(tmp)>0) hpc.nproc<- tmp[1]		
 	}	
+	if(is.na(outdir))
+		outdir<- indir
 	if(verbose)
 	{
 		print(verbose)
@@ -554,6 +556,7 @@ prog.recom.get.incongruence<- function()
 		print(bs.from)
 		print(bs.to)
 		print(bs.n)
+		print(seq.select.n)
 		print(hpc.walltime)
 		print(hpc.mem)
 		print(hpc.nproc)		
@@ -580,197 +583,45 @@ prog.recom.get.incongruence<- function()
 	}
 	if(!resume || tmp==0)
 	{
-		file		<- paste(indir,'/',infile,'_', gsub('/',':',insignat),".R",sep='')
-		if(verbose)	cat(paste("\nload file ",file))			
-		load(file)
-		#	loaded seq.PROT.RT
-		file		<- paste(indir,'/',infile,"_3seq_", gsub('/',':',insignat),".R",sep='')		
+		if(!grepl('.R',infile))							stop("expect R infile that ends in .R")		
+		file			<- paste(indir,'/',infile,sep='')
+		tmp				<- load(file)
+		if(verbose)	cat(paste('\nloaded file=', tmp))
+		if(tmp!='seq')
+			eval(parse(text=paste("seq<- ",tmp,sep='')))
+		if(!"DNAbin"%in%class(seq) || !is.matrix(seq))	stop("expect R infile that contains a DNAbin matrix")
+		#	loaded seq
+		file		<- paste(indir,'/',substr(infile,1,nchar(infile)-2),"_3seq.R",sep='')		
 		options(show.error.messages = FALSE)		
 		if(verbose)	cat(paste("\ntry to load file ",file))
 		readAttempt	<-	try(suppressWarnings(load(file)))
 		options(show.error.messages = TRUE)
 		if(inherits(readAttempt, "try-error"))	stop(paste("\nCannot find 3SEQ file, run prog.recom.process.3SEQ.output?, file=",file))			
-		#	loaded df.recomb
-		
 		#
 		#	process triplet for dummy id	
 		#	
-		df.recomb	<- subset(df.recomb, dummy==id)
+		triplet	<- subset(df.recomb, dummy==id)
 		if(verbose)	cat(paste("\nprocess triplet number",id))
-		if(verbose)	print(df.recomb)
-		#	create sequence matrices corresponding to the two breakpoint regions 
-		seq.in		<- seq.PROT.RT[,seq.int(df.recomb[,bp1.1],df.recomb[,bp1.2])]
-		seq.out		<- if(df.recomb[,child.start]<df.recomb[,bp1.1]-1) seq.int(df.recomb[,child.start],df.recomb[,bp1.1]-1) else numeric(0) 
-		seq.out		<- if(df.recomb[,bp1.2]+1<df.recomb[,child.len]) c(seq.out,seq.int(df.recomb[,bp1.2]+1, df.recomb[,child.len]))	else 	seq.out
-		seq.out		<- seq.PROT.RT[,seq.out]
-		seq.select.f<- ifelse(min(ncol(seq.out),ncol(seq.in))<150, 10, 10)
-		if(verbose)	cat(paste("\nsetting inflation factor to",seq.select.f))
-		seq.select.n<- seq.select.n * seq.select.f
-		#	select background sequences for child based on sequence similarity
-		if(verbose)	cat(paste("\ncompute genetic distances for parent1 parent2 child"))
-		tmp				<- which( rownames(seq.PROT.RT)==df.recomb[,child] )		
-		dummy			<- 0				
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.in))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.in[tmp,], seq.in[i,], ncol(seq.in), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="child", region="in" ) 		
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.out[tmp,], seq.out[i,], ncol(seq.out), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="child", region="out" )) 
-		#	select background sequences for parent1 based on sequence similarity
-		tmp				<- which( rownames(seq.PROT.RT)==df.recomb[,parent1] )				
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.in))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.in[tmp,], seq.in[i,], ncol(seq.in), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- rbind(seq.df,data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="parent1", region="in" )) 		
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.out[tmp,], seq.out[i,], ncol(seq.out), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="parent1", region="out" )) 
-		#	select background sequences for parent2 based on sequence similarity
-		tmp				<- which( rownames(seq.PROT.RT)==df.recomb[,parent2] )				
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.in))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.in[tmp,], seq.in[i,], ncol(seq.in), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- rbind(seq.df,data.table( FASTASampleCode=rownames(seq.in)[-tmp] , dist=seq.dist, group="parent2", region="in" )) 		
-		seq.dist					<- 1 - sapply(seq_len(nrow(seq.out))[-tmp],function(i){		.C("hivc_dist_ambiguous_dna", seq.out[tmp,], seq.out[i,], ncol(seq.out), dummy )[[4]]			})	
-		seq.dist[is.nan(seq.dist)]	<- Inf
-		seq.df			<- rbind(seq.df, data.table( FASTASampleCode=rownames(seq.out)[-tmp] , dist=seq.dist, group="parent2", region="out" ))
-		#	first pass:
-		#	select closest FASTASampleCode by group and region to verify recombination breakpoint by phylogenetic incongruence
-		setkeyv(seq.df, c("group","region","dist"))
-		seq.df			<- subset(seq.df, dist>0)
-		if(verbose)	cat(paste("\nFound related sequences with dist>0, n=",nrow(seq.df)))
-		#	for each group and region, select the n closest sequence names (non-unique)
-		seq.df			<- seq.df[	,	list(FASTASampleCode=FASTASampleCode[seq_len(seq.select.n)], dist=dist[seq_len(seq.select.n)]), by=c("group","region")]
-		#	keep each sequence name once, for the group it is closest to		
-		seq.df			<- seq.df[, {
-										tmp<- which.min(dist)
-										list(dist= dist[tmp], group=group[tmp], region=region[tmp])
-									}, by=c("FASTASampleCode")]
-		setkeyv(seq.df, c("group","region","dist"))					
-		if(verbose)	cat(paste("\ndetermined candidates for balancing filler sequences, n=",nrow(seq.df)))
-		#	select unique sequences
-		tmp				<- c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child], seq.df[, FASTASampleCode] )
-		tmp				<- hivc.seq.unique(seq.in[tmp,])
-		seq.df			<- merge( data.table(FASTASampleCode=rownames(tmp)), seq.df, by="FASTASampleCode" )
-		tmp				<- c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child], seq.df[, FASTASampleCode] )
-		tmp				<- hivc.seq.unique(seq.out[tmp,])
-		seq.df			<- merge( data.table(FASTASampleCode=rownames(tmp)), seq.df, by="FASTASampleCode" )
-		seq.df			<- subset(seq.df, !FASTASampleCode%in%c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ) )		
-		if(verbose)	cat(paste("\nfound candidates for filler sequences that are unique on both recombinant regions, n=",nrow(seq.df)))
-		if(verbose)	print( seq.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
-		#		
-		seq.select.n	<- seq.select.n/seq.select.f 
-		#	select 'seq.select.n' unique filler sequences for 'in' region, balancing by group as much as possible
-		if(verbose)	cat(paste("\nSelect filler sequences for recombinant region 'in'"))
-		tmp						<- subset( seq.df, region=='in' )[,FASTASampleCode]
-		tmp						<- hivc.seq.unique(seq.in[tmp ,])
-		seq.in.df				<- merge( data.table(FASTASampleCode=rownames(tmp)), subset(seq.df,region=="in"), by="FASTASampleCode" )
-		setkey(seq.in.df, dist)
-		if(nrow(seq.in.df)<seq.select.n)	cat(paste("\ncan only select less than the requested number of sequences, n=",nrow(seq.in.df)))
-		tmp						<- rbind( seq.in.df, data.table(FASTASampleCode=NA, dist=NA, group=c("child","parent1","parent2"), region=NA) )
-		seq.in.order			<- tmp[	,	list(n=length(na.omit(FASTASampleCode))) ,by=c("group")]		
-		seq.in.order			<- seq.in.order[order(n),]
-		overflow				<- 0
-		ans						<- data.table(FASTASampleCode=NA, dist=NA, group=NA, region=NA)
-		for(x in seq.in.order[,group])
-		{			
-			#print(x)
-			tmp					<- subset(seq.in.df, group==x)
-			#print(tmp)
-			ans					<- rbind(tmp[seq_len( min(seq.select.n+overflow, nrow(tmp)) ),], ans )
-			overflow			<- ifelse(seq.select.n+overflow<nrow(tmp), 0, seq.select.n+overflow-nrow(tmp))
-		}
-		if(overflow>0)	cat(paste("\nNot as many filler sequences as requested for recombinant region 'in', n=",nrow(seq.out.df)))
-		seq.in.df				<- ans[-nrow(ans),]
-		if(verbose)	cat(paste("\nSelected balancing sequences for recombinant region 'in', n=",nrow(seq.in.df)))
-		if(verbose)	print( seq.in.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
-		#
-		#	select 'seq.select.n' unique filler sequences for 'out' region, balancing by group as much as possible
-		#
-		if(verbose)	cat(paste("\nSelect sequences for recombinant region 'out'"))
-		tmp						<- subset( seq.df, region=='out' )[,FASTASampleCode] 
-		tmp						<- hivc.seq.unique(seq.out[tmp,])		
-		seq.out.df				<- merge( data.table(FASTASampleCode=rownames(tmp)), subset(seq.df,region=="out"), by="FASTASampleCode" )
-		setkey(seq.out.df, dist)
-		if(nrow(seq.out.df)<seq.select.n)	cat(paste("\ncan only select less than the requested number of sequences, n=",nrow(seq.out.df)))
-		tmp						<- rbind( seq.out.df, data.table(FASTASampleCode=NA, dist=NA, group=c("child","parent1","parent2"), region=NA) )
-		seq.out.order			<- tmp[	,	list(n=length(FASTASampleCode)) ,by=c("group")]		
-		seq.out.order			<- seq.out.order[order(n),]
-		overflow				<- 0
-		ans						<- data.table(FASTASampleCode=NA, dist=NA, group=NA, region=NA)		
-		for(x in seq.out.order[,group])
-		{			
-			#print(x)
-			tmp					<- subset(seq.out.df, group==x)
-			#print(tmp)
-			ans					<- rbind(tmp[seq_len( min(seq.select.n+overflow, nrow(tmp)) ),], ans )
-			overflow			<- ifelse(seq.select.n+overflow<nrow(tmp), 0, seq.select.n+overflow-nrow(tmp))
-		}
-		if(overflow>0)	cat(paste("\nNot as many filler sequences as requested for recombinant region 'out', n=",nrow(seq.out.df)))
-		seq.out.df				<- ans[-nrow(ans),]
-		if(verbose)	cat(paste("\nSelected balancing sequences for recombinant region 'out', n=",nrow(seq.out.df)))
-		if(verbose)	print( seq.out.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )
-		#	combine unique filler sequences
-		seq.df					<- rbind( seq.in.df, seq.out.df )
-		if(verbose)	cat(paste("\nSelected balancing set of closest filler sequences"))
-		if(verbose)	print( seq.df[	,	list(n=length(FASTASampleCode)) ,by=c("group","region")] )		
-		if( length(unique( seq.df[, FASTASampleCode] ))!=nrow(seq.df) )		stop("Unexpected non-unique sequence names")
-		if( nrow(hivc.seq.unique( seq.in[ seq.df[, FASTASampleCode], ] ))!=nrow(seq.df) ) stop("Unexpected non-unique 'in' sequences")
-		if( nrow(hivc.seq.unique( seq.out[ seq.df[, FASTASampleCode], ] ))!=nrow(seq.df) ) stop("Unexpected non-unique 'out' sequences")
-		#	could be that the triplet sequences are not unique among each other 
-		#	if so, make change to one of the triplet sequences
-		seq.select				<- c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child], seq.df[, FASTASampleCode] )
-		tmp						<- hivc.seq.unique( seq.in[ seq.select, ] )
-		if( !length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )
-			seq.in				<- tmp
-		if( length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )
-		{
-			tmp					<- setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp) )		#name of sequence in triplet that is identical with one other sequence in triplet
-			if(verbose)	cat(paste("\nFound identical triplet sequence for region 'in'", tmp))
-			seq.in				<- as.character(seq.in)
-			seq.in[tmp,1]		<- ifelse(seq.in[tmp,1]=='t','c',ifelse(seq.in[tmp,1]=='c','t',ifelse(seq.in[tmp,1]=='a','g','a')))
-			seq.in				<- as.DNAbin(seq.in)
-			tmp					<- hivc.seq.unique( seq.in[ seq.select, ] )
-			if( length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )	stop("Unexpected duplicate for 'in'")
-			seq.in				<- tmp
-		}			
-		seq.out					<- seq.out[seq.select,]
-		tmp						<- hivc.seq.unique(seq.out)
-		if( !length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )
-			seq.out				<- tmp
-		if( length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )
-		{
-			tmp					<- setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp) )		#name of sequence in triplet that is identical with one other sequence in triplet
-			if(verbose)	cat(paste("\nFound identical triplet sequence for region 'out'", tmp))
-			seq.out				<- as.character(seq.out)
-			seq.out[tmp,1]		<- ifelse(seq.out[tmp,1]=='t','c',ifelse(seq.out[tmp,1]=='c','t',ifelse(seq.out[tmp,1]=='a','g','a')))
-			seq.out				<- as.DNAbin(seq.out)
-			tmp					<- hivc.seq.unique(seq.out[seq.select,])
-			if( length(setdiff(c( df.recomb[,parent1],df.recomb[,parent2],df.recomb[,child] ),rownames(tmp))) )	stop("Unexpected duplicate for 'out'")
-			seq.out				<- tmp
-		}
-		if(any(rownames(seq.in)!=rownames(seq.out)))	stop("Unexpected unequal sequences selected")
-		#	reset rownames
-		tmp						<- c( paste(c("tparent1","tparent2","tchild"),seq.select[1:3],sep='_'), seq.df[,list(label= paste(region,group,FASTASampleCode,sep='_')), by="FASTASampleCode"][,label] )
-		rownames(seq.in)		<- tmp
-		rownames(seq.out)		<- tmp
+		if(verbose)	print(triplet)
+		tmp		<- r3seq.guess.related.sequences(triplet, seq, seq.select.n, verbose=TRUE)
+		seq.in	<- tmp$seq.in
+		seq.out	<- tmp$seq.out
 		#	save
-		file		<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rIn_",gsub('/',':',insignat),".R",sep='')
+		file		<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rIn.R",sep='')
 		if(verbose) cat(paste("\nsave to ",file))
 		save(seq.in, file=file)		
-		file		<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rOut_",gsub('/',':',insignat),".R",sep='')
+		file		<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rOut.R",sep='')
 		if(verbose) cat(paste("\nsave to ",file))
 		save(seq.out, file=file)
-	}
-	if(1)
-	{
 		#
 		#	run bootstrap ExaML for region 'in', all boostraps on one processor
 		#			
 		cmd				<- NULL
-		file			<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rIn_examlbs",bs.n,'_',gsub('/',':',insignat),".newick",sep='')		
+		file			<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rIn_examlbs",bs.n,".newick",sep='')		
 		if(!resume || !file.exists(file))
 		{
-			infile.exa	<- paste(infile,"_3seqcheck_id",id,"_rIn",sep='')		
-			cmd			<- cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1)
+			infile.exa	<- paste(substr(infile,1,nchar(infile)-3),"_3seqcheck_id",id,"_rIn",sep='')		
+			cmd			<- cmd.examl.bootstrap.on.one.machine(indir, infile.exa, '', '', bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1)
 		}
 		#
 		#	run bootstrap ExaML for region 'out', all boostraps on one processor
@@ -778,7 +629,7 @@ prog.recom.get.incongruence<- function()
 		file			<- paste(indir,'/',infile,"_3seqcheck_id",id,"_rOut_examlbs",bs.n,'_',gsub('/',':',insignat),".newick",sep='')
 		if(!resume || !file.exists(file))
 		{
-			infile.exa	<- paste(infile,"_3seqcheck_id",id,"_rOut",sep='')		
+			infile.exa	<- paste(substr(infile,1,nchar(infile)-3),"_3seqcheck_id",id,"_rOut",sep='')		
 			cmd			<- c(cmd, cmd.examl.bootstrap.on.one.machine(indir, infile.exa, gsub('/',':',insignat),gsub('/',':',insignat), bs.from=bs.from, bs.to=bs.to, bs.n=bs.n, outdir=indir, opt.bootstrap.by="nucleotide", resume=1, verbose=1))
 		}
 		#
@@ -790,8 +641,7 @@ prog.recom.get.incongruence<- function()
 			#cat(cmd)
 			if(verbose) cat(paste("\nqsub ExaML bootstrap runs, hpc.walltime=",hpc.walltime," hpc.mem=",hpc.mem," hpc.nproc=",hpc.nproc," hpc.q=",hpc.q))
 			cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
-			signat		<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')
-			outdir		<- paste(DATA,"tmp",sep='/')
+			signat		<- paste(strsplit(date(),split=' ')[[1]],collapse='_',sep='')		
 			outfile		<- paste("3sc",signat,sep='.')
 			#cat(cmd)			
 			cmd.hpccaller(outdir, outfile, cmd)
