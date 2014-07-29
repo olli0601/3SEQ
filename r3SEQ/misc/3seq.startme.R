@@ -10,10 +10,10 @@
 # 	because the R files are re-loaded below
 #
 # usage from R:
-#> setwd("/Users/Oliver/git/recombination.analyzer/pkg")
+#> setwd("/Users/Oliver/git/3SEQ/r3SEQ")
 #> source("misc/3seq.startme.R")
 # usage from bash:
-#> cd /Users/Oliver/git/recombination.analyzer/pkg
+#> cd /Users/Oliver/git/3SEQ/r3SEQ
 #> misc/3seq.startme.R 
 #
 #
@@ -25,7 +25,7 @@ if(any(args=='--args'))
 	args<- args[-(1:match("--args", args)) ]
 
 #the package directory (local working copy of the code, not the installed package directory within the R directory 
-CODE.HOME	<<- "/Users/Oliver/git/recombination.analyzer/pkg"
+CODE.HOME	<<- "/Users/Oliver/git/3SEQ/r3SEQ"
 #CODE.HOME	<<- "/work/or105/libs/hivclust/pkg"
 
 #the home directory of all projects
@@ -60,9 +60,9 @@ if(length(args))
 					ROXYGENIZE				= "package.roxygenize",
 					MAKE.RDATA				= "package.generate.rdafiles",
 					BOOTSTRAPSEQ			= "prog.examl.getbootstrapseq",
-					RECOMB.PROCESS3SEQOUT	= "prog.recom.process.3SEQ.output",
-					RECOMB.CHECKCANDIDATES	= "prog.recom.get.incongruence",
-					RECOMB.PLOTINCONGRUENCE	= "prog.recom.plot.incongruence"
+					RECOMB.PROCESS3SEQOUT	= "r3seq.prog.process.3SEQ.output",
+					RECOMB.CHECKCANDIDATES	= "r3seq.prog.get.incongruence",
+					RECOMB.PLOTINCONGRUENCE	= "r3seq.prog.plot.incongruence"
 					)
 	}
 	tmp<- na.omit(sapply(args,function(arg)
@@ -91,6 +91,6 @@ sapply(function.list,function(x){ source(x,echo=FALSE,print.eval=FALSE, verbose=
 ###############################################################################
 #	run script
 if(DEBUG)	options(error= my.dumpframes)	
-cat(paste("\nrecombination.analyzer: ",ifelse(DEBUG,"debug",""),"call",default.fun,"\n"))
+cat(paste("\nr3seq: ",ifelse(DEBUG,"debug",""),"call",default.fun,"\n"))
 do.call(default.fun,list()) 	
-cat("\nrecombination.analyzer: ",ifelse(DEBUG,"debug","")," end\n")
+cat("\nr3seq: ",ifelse(DEBUG,"debug","")," end\n")

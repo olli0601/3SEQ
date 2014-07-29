@@ -1,7 +1,7 @@
-Package: recombination.analyzer
+Package: r3SEQ
 Version: 1.0-0
 Date: 2013/12/31
-Title: recombination.analyzer
+Title: r3SEQ
 Author: {Oliver Ratmann}
 Maintainer: Oliver Ratmann <oliver.ratmann@imperial.ac.uk>
 Depends:

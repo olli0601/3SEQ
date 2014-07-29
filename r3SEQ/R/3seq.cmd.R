@@ -2,7 +2,7 @@
 #' Shell scripts are generated that can be either run directly, or submitted to an HPC system.
 #' At present, cmd.hpccaller provides an interface to the CX1B high performance system that runs PBS (portable batch system)
 
-PR.PACKAGE					<- "recombination.analyzer"
+PR.PACKAGE					<- "r3seq"
 PR.STARTME					<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
 PR.RECOMB.3SEQ				<- system.file(package=PR.PACKAGE, "ext", "3seq") 
 PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exe=RECOMB.PROCESS3SEQOUT",sep=' ')
@@ -16,7 +16,7 @@ HPC.CX1.IMPERIAL.LOAD		<- "module load intel-suite mpi R/2.15"
 
 #generate 3seq command
 #' @export
-cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep=''), recomb.3seq.siglevel=0.1, recomb.3seq.testvsall.beginatseq=NA, recomb.3seq.testvsall.endatseq=NA, prog= PR.RECOMB.3SEQ, nproc=1, verbose=1)
+r3seq.cmd.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep=''), recomb.3seq.siglevel=0.1, recomb.3seq.testvsall.beginatseq=NA, recomb.3seq.testvsall.endatseq=NA, prog= PR.RECOMB.3SEQ, nproc=1, verbose=1)
 {
 	cmd<- "#######################################################
 # start: run 3Seq
@@ -40,10 +40,10 @@ cmd.recombination.run.3seq<- function(infile, outfile=paste(infile,".3s.rec",sep
 
 #process 3seq output
 #' @export
-cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= PR.RECOMB.PROCESS3SEQOUTPUT, resume=1, verbose=1)
+r3seq.cmd.process.3SEQ.output<- function(indir, infile, insignat, prog= PR.RECOMB.PROCESS3SEQOUTPUT, resume=1, verbose=1)
 {
 	cmd<- "#######################################################
-# start: run prog.recom.process.3SEQ.output
+# start: run r3seq.prog.process.3SEQ.output
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -52,17 +52,17 @@ cmd.recombination.process.3SEQ.output<- function(indir, infile, insignat, prog= 
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: run prog.recom.process.3SEQ.output
+# end: run r3seq.prog.process.3SEQ.output
 #######################################################\n",sep='')
 	cmd	
 }
 
 #check 3seq candidate recombinants
 #' @export
-cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1,hpc.walltime=NA, hpc.q=NA, hpc.mem=NA, hpc.nproc=NA)
+r3seq.cmd.check.candidates<- function(indir, infile, insignat, triplet.id, prog= PR.RECOMB.CHECKCANDIDATES, resume=1, verbose=1,hpc.walltime=NA, hpc.q=NA, hpc.mem=NA, hpc.nproc=NA)
 {
 	cmd<- "#######################################################
-# start: prog.recom.get.incongruence
+# start: r3seq.prog.get.incongruence
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -75,15 +75,15 @@ cmd.recombination.check.candidates<- function(indir, infile, insignat, triplet.i
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: prog.recom.get.incongruence
+# end: r3seq.prog.get.incongruence
 #######################################################\n",sep='')
 	cmd	
 }
 
-cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.id=NA, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=NA,verbose=1)
+r3seq.cmd.plot.incongruence<- function(indir, infile, insignat, triplet.id=NA, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=NA,verbose=1)
 {
 	cmd<- "#######################################################
-# start: prog.recom.plot.incongruence
+# start: r3seq.prog.plot.incongruence
 #######################################################"
 	cmd<- paste(cmd,paste("\necho \'run ",prog,"\'\n",sep=''))
 	#default commands
@@ -96,7 +96,7 @@ cmd.recombination.plot.incongruence<- function(indir, infile, insignat, triplet.
 	#verbose stuff
 	cmd<- paste(cmd,paste("\necho \'end ",prog,"\'\n",sep=''))
 	cmd<- paste(cmd,"#######################################################
-# end: prog.recom.plot.incongruence
+# end: r3seq.prog.plot.incongruence
 #######################################################\n",sep='')
 	cmd	
 }

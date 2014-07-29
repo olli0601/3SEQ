@@ -18,7 +18,7 @@
 #' @example example/package.neisseria.run.3seq.R
 #' @example example/package.mtDNA.run.3seq.R
 #' @export
-pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.sys= cmd.hpcsys(), hpc.walltime=35, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=1, verbose=1)
+r3seq.pipe.run.3seq<- function(indir, infile, batch.n=100, hpc.sys= cmd.hpcsys(), hpc.walltime=35, hpc.q=NA, hpc.mem="3850mb", hpc.nproc=1, verbose=1)
 {
 	#load sequences into 'seq' object 
 	if(!grepl('.R',infile))							stop("expect R infile that ends in .R")		
@@ -42,7 +42,7 @@ pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.sys= cmd.hpcs
 	#batch.seq		<- batch.seq[,1:10]	#test run
 	lapply(seq_len(ncol(batch.seq)),function(j)
 			{					
-				cmd			<- cmd.recombination.run.3seq(infile=file, outfile=paste(indir,'/',infile,'_',batch.seq[1,j],'-',batch.seq[2,j],".3seq",sep=''), recomb.3seq.siglevel=0.1, nproc=1, recomb.3seq.testvsall.beginatseq=batch.seq[1,j], recomb.3seq.testvsall.endatseq=batch.seq[2,j], verbose=1)				
+				cmd			<- r3seq.cmd.run.3seq(infile=file, outfile=paste(indir,'/',infile,'_',batch.seq[1,j],'-',batch.seq[2,j],".3seq",sep=''), recomb.3seq.siglevel=0.1, nproc=1, recomb.3seq.testvsall.beginatseq=batch.seq[1,j], recomb.3seq.testvsall.endatseq=batch.seq[2,j], verbose=1)				
 				cmd			<- cmd.hpcwrapper(cmd, hpc.sys=hpc.sys, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem,  hpc.nproc=hpc.nproc)
 				if(verbose)	cat(cmd)
 				outdir		<- indir
@@ -53,33 +53,33 @@ pipeline.recom.run.3seq<- function(indir, infile, batch.n=100, hpc.sys= cmd.hpcs
 }
 ######################################################################################
 #' @export
-pipeline.recom.get.phyloincongruence.for.candidates<- function(indir, infile, insignat, resume=0, verbose=1, hpc.walltime=35, hpc.q=NA, hpc.mem="600mb", hpc.nproc=1)
+r3seq.pipe.get.phyloincongruence.for.candidates<- function(indir, infile, insignat, resume=0, verbose=1, hpc.walltime=35, hpc.q=NA, hpc.mem="600mb", hpc.nproc=1)
 {	
-	argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+	argv				<<-	r3seq.cmd.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 	argv				<<- unlist(strsplit(argv,' '))
-	df.recomb			<- prog.recom.process.3SEQ.output()	
+	df.recomb			<- r3seq.prog.process.3SEQ.output()	
 	
 	triplets			<- seq_len(nrow(df.recomb))
 	#triplets			<- 147:nrow(df.recomb)
 	dummy	<- lapply(triplets, function(i)
 			{					
 				if(verbose)	cat(paste("\nprocess triplet number",i,"\n"))
-				argv				<<- cmd.recombination.check.candidates(indir, infile, insignat, i, resume=resume, verbose=1, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
+				argv				<<- r3seq.cmd.check.candidates(indir, infile, insignat, i, resume=resume, verbose=1, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
 				argv				<<- unlist(strsplit(argv,' '))
-				prog.recom.get.incongruence()		#this starts ExaML for the ith triplet			
+				r3seq.prog.get.incongruence()		#this starts ExaML for the ith triplet			
 			})	
 }
 ######################################################################################
 #' @export
-pipeline.recom.plot.phyloincongruence.for.candidates<- function(indir, infile, insignat, resume=0, verbose=1)
+r3seq.pipe.plot.phyloincongruence.for.candidates<- function(indir, infile, insignat, resume=0, verbose=1)
 {	
-	argv				<<- cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="ng2", verbose=1)
+	argv				<<- r3seq.cmd.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="ng2", verbose=1)
 	argv				<<- unlist(strsplit(argv,' '))
-	prog.recom.plot.incongruence()		
+	r3seq.prog.plot.incongruence()		
 	
-	argv				<<- cmd.recombination.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="g2", verbose=1)
+	argv				<<- r3seq.cmd.plot.incongruence(indir, infile, insignat, triplet.id=NA, opt.select="g2", verbose=1)
 	argv				<<- unlist(strsplit(argv,' '))
-	prog.recom.plot.incongruence()	
+	r3seq.prog.plot.incongruence()	
 }
 
 

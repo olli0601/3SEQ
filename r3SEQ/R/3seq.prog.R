@@ -6,12 +6,12 @@
 #' \code{argv} string, see the Examples.
 #' @return Data table of potential recombinant sequences and associated parent sequences that are identified at a 
 #' given p-value that is corrected for multiple comparisons.
-#' @seealso \code{\link{pipeline.recom.run.3seq}}
+#' @seealso \code{\link{r3seq.pipe.run.3seq}}
 #' @example example/package.mtDNA.process.3seq.R
 #' @export
-prog.recom.process.3SEQ.output<- function()
+r3seq.prog.process.3SEQ.output<- function()
 {	
-	require(recombination.analyzer)
+	require(r3SEQ)
 	
 	verbose		<- 1
 	resume		<- 1
@@ -204,11 +204,11 @@ prog.recom.process.3SEQ.output<- function()
 }
 ######################################################################################
 #' @export
-prog.recom.plot.incongruence<- function()
+r3seq.prog.plot.incongruence<- function()
 {
 	require(RColorBrewer)
 	require(ape)
-	require(recombination.analyzer)
+	require(r3SEQ)
 	
 	verbose		<- 1
 	resume		<- 1
@@ -269,9 +269,9 @@ prog.recom.plot.incongruence<- function()
 	if(is.na(id))
 	{
 		#	read candidate triplets
-		argv				<<-	cmd.recombination.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
+		argv				<<-	r3seq.cmd.process.3SEQ.output(indir, infile, insignat, resume=1, verbose=1) 
 		argv				<<- unlist(strsplit(argv,' '))
-		df.recomb			<- prog.recom.process.3SEQ.output()
+		df.recomb			<- r3seq.prog.process.3SEQ.output()
 		setnames(df.recomb, "dummy", "triplet.id")
 		setkey(df.recomb, triplet.id)
 		#	get candidate recombinant sequences
@@ -300,9 +300,9 @@ prog.recom.plot.incongruence<- function()
 			tmp				<- unique(subset(df.recombseq, n.triplets>2)[, FASTASampleCode])
 			dummy			<- lapply(tmp, function(x)
 						{
-							argv			<<- cmd.recombination.plot.incongruence(indir, infile, insignat, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=x,verbose=1)
+							argv			<<- r3seq.cmd.plot.incongruence(indir, infile, insignat, prog= PR.RECOMB.PLOTINCONGRUENCE, opt.select=x,verbose=1)
 							argv			<<- unlist(strsplit(argv,' '))
-							prog.recom.plot.incongruence()			
+							r3seq.prog.plot.incongruence()			
 						})
 			stop()
 		}
@@ -474,11 +474,11 @@ prog.recom.plot.incongruence<- function()
 }
 ######################################################################################
 #' @export
-prog.recom.get.incongruence<- function()
+r3seq.prog.get.incongruence<- function()
 {	
 	require(ape)
 	require(data.table)
-	require(recombination.analyzer)
+	require(r3SEQ)
 	#default arguments
 	verbose		<- 1
 	resume		<- 0
@@ -596,7 +596,7 @@ prog.recom.get.incongruence<- function()
 		if(verbose)	cat(paste("\ntry to load file ",file))
 		readAttempt	<-	try(suppressWarnings(load(file)))
 		options(show.error.messages = TRUE)
-		if(inherits(readAttempt, "try-error"))	stop(paste("\nCannot find 3SEQ file, run prog.recom.process.3SEQ.output?, file=",file))			
+		if(inherits(readAttempt, "try-error"))	stop(paste("\nCannot find 3SEQ file, run r3seq.prog.process.3SEQ.output?, file=",file))			
 		#
 		#	process triplet for dummy id	
 		#	
@@ -637,7 +637,7 @@ prog.recom.get.incongruence<- function()
 		if(!is.null(cmd))
 		{
 			cmd			<- paste(cmd,collapse='\n')
-			#cmd		<- paste(cmd,cmd.recombination.plot.incongruence(indir, infile, gsub('/',':',insignat), triplet.id=id, verbose=1),sep='')				
+			#cmd		<- paste(cmd,r3seq.cmd.plot.incongruence(indir, infile, gsub('/',':',insignat), triplet.id=id, verbose=1),sep='')				
 			#cat(cmd)
 			if(verbose) cat(paste("\nqsub ExaML bootstrap runs, hpc.walltime=",hpc.walltime," hpc.mem=",hpc.mem," hpc.nproc=",hpc.nproc," hpc.q=",hpc.q))
 			cmd			<- cmd.hpcwrapper(cmd, hpc.walltime=hpc.walltime, hpc.q=hpc.q, hpc.mem=hpc.mem, hpc.nproc=hpc.nproc)
