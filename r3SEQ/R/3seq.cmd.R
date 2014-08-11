@@ -2,7 +2,7 @@
 #' Shell scripts are generated that can be either run directly, or submitted to an HPC system.
 #' At present, cmd.hpccaller provides an interface to the CX1B high performance system that runs PBS (portable batch system)
 
-PR.PACKAGE					<- "r3seq"
+PR.PACKAGE					<- "r3SEQ"
 PR.STARTME					<- system.file(package=PR.PACKAGE, "misc", "3seq.startme.R") 
 PR.RECOMB.3SEQ				<- system.file(package=PR.PACKAGE, "ext", "3seq") 
 PR.RECOMB.PROCESS3SEQOUTPUT	<- paste(PR.STARTME,"-exe=RECOMB.PROCESS3SEQOUT",sep=' ')

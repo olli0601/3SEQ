@@ -1,4 +1,4 @@
-DEST:= $(R_LIBS_USER)/recombination.analyzer
+DEST:= $(R_LIBS_USER)/r3SEQ
 DEST:= $(subst ~,$(HOME),$(DEST))
 EXTERNAL_CODE:= $(DEST)/ext
 CWD= $$(pwd)
