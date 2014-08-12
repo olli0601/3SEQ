@@ -162,6 +162,6 @@ cmd.hpccaller<- function(outdir, outfile, cmd)
 		cat(paste("\nwrite Shell script to\n",file,"\nNo 'qsub' function detected to submit the shell script automatically.\nStart this shell file manually\n"))
 		cat(cmd,file=file)
 		Sys.chmod(file, mode = "777")		
+		Sys.sleep(1)
 	}
-	
 }
